@@ -1,8 +1,11 @@
 <!–– r1 ––>
 <html>
 <head>
-<meta charset="utf-8" />
-<title>Parse Shark</title>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<meta name="robots" content="noindex, nofollow"/>
+<meta name="googlebot" content="noindex, nofollow"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 </head>
 <style>
 	@font-face{ 
@@ -164,6 +167,14 @@
 		white-space: nowrap;
 	}
 	
+	.bloodsplat {
+		width: 35px;
+		height: 35px;
+		box-shadow: 0px 100px 15px 0px #f00;
+		position: absolute;
+		top: -100px;
+	}
+	
 	.resizeHandle {
 		background-image: url(images/handle.png);
 		background-position: bottom right;
@@ -172,6 +183,7 @@
 	}
 </style>
 <script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="lib/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/chart.bundle.min.js" type="text/javascript"></script>
 <script src="lib/parse.js" type="text/javascript"></script>
 <script src="lib/player.js" type="text/javascript"></script>
@@ -186,10 +198,11 @@
 	<div id="dpsgraph-html">
 	</div>
 <script>
+	'use strict';
 	var players = [];
 	var activeGate = false;
 	var topDamage = 0;
-	
+
 	var ctx = document.getElementById('graph').getContext('2d');
 	var graphCanvas = new Chart(ctx, 
 		{
@@ -242,9 +255,7 @@
 	
 	// UPDATE
 	function update(rawdata) {
-		var data = new Data(rawdata);
-		var debug = "";
-		
+		var data = new Data(rawdata);		
 		var elem = document.getElementById('graph');
 		
 		// Display Legend
@@ -254,7 +265,7 @@
 		legendhtml += '<span class="span-absolute" style="left: 25%; margin-left: 3px;">CRIT</span>';
 		legendhtml += '<span class="span-absolute" style="left: 40%; margin-left: 3px;">DHIT</span>';
 		legendhtml += '<span class="span-absolute" style="left: 55%; margin-left: 3px;">!!!</span>';
-		legendhtml += '<span class="span-absolute" style="left: 70%; margin-left: 3px;">Deaths</span>';
+		legendhtml += '<span class="span-absolute" style="left: 70%; margin-left: 3px;">DEATHS</span>';
 		legendhtml += '<span class="span-absolute" style="right: 2; margin-left: 3px; text-align: right;">MAXHIT</span>';
 		ele.innerHTML = legendhtml;
 		
@@ -328,14 +339,13 @@
 		//if (true) {
 		if (data.isActive == "true") {
 			// Check for new players
-			for (var e in data.Combatant) {
+			for (let e in data.Combatant) {
 				var entry = data.Combatant[e];
 				if (inArrayKey(players, 'name', entry['name']) == false && Player.isValid(entry)) {
 					// Make a new player entry
 					var newPlayer = new Player(entry);
 					newPlayer.divID = players.length;
 					
-					var divRGBA = "";
 					switch (newPlayer.role) {
 						case "dps":
 							newPlayer.divRGBA = "rgba(190, 50, 120, .3)";
@@ -380,12 +390,17 @@
 					
 					document.getElementById('main').appendChild(ele);
 					players.push(newPlayer);
+					
+					/*Debug
+					$('#'+newPlayer.divID).click(function(){ 
+						newPlayer.state = "dead";
+					});*/
 				}
 			}
-			
+
 			// Update and sort players and relevant data
 			topDamage = 0;
-			for (var p in players) {
+			for (let p in players) {
 				players[p].update(data.Combatant);
 				if (parseFloat(players[p].dps) > topDamage) topDamage = parseFloat(players[p].dps);
 			}
@@ -394,9 +409,9 @@
 			});
 			
 			// Animation
-			for (var d in players) {
+			for (let d in players) {
 				// Update div elements
-				var ele = document.getElementById(players[d].divID);
+				let ele = document.getElementById(players[d].divID);
 				var dpsbarwidth = (parseFloat(players[d].dps)/topDamage) * 100;
 				
 				$('#' + players[d].divID + ' .player-dps-base').text(players[d].dpsbase);
@@ -408,50 +423,96 @@
 				$('#' + players[d].divID + ' .player-stat.maxhit').html(players[d].maxhit + '<br />' + players[d].maxhitnum);
 				$('#' + players[d].divID + ' .player-dps-bar').width(dpsbarwidth + '%');
 				
-				//Animation
-				if (players[d].state == "alive" && players[d].displaymaxhit) {
-					players[d].displaymaxhit = false;
-					var num = Math.floor(Math.random()*5) + 1;
-					num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
-					var sidepop = document.createElement("div");
-					sidepop.setAttribute('id', players[d].divID + Date.now());
-					sidepop.setAttribute('class', 'player-side-popup');
-					sidepop.style.transform = 'rotate(' + num + 'deg)';
-					sidepop.innerHTML = players[d].maxhit + '<br />' + players[d].maxhitnum;
-					document.getElementById(players[d].divID).appendChild(sidepop);
-					sidepop.style.top = -5;
-					var sideleft = ($(sidepop, this).width()/2 * -1) - 40;
-					sidepop.style.left = sideleft;
-					sideleft = (sideleft/1.25);
-					
-					$(sidepop).delay(1500).animate({
-						'opacity' : 0,
-						'height': '50%',
-						'width': '15%',
-						'top': "25%",
-						'left': sideleft,
-						'fontSize': '50%'
-					}, 500, function(e){
-						$(sidepop).remove();
+				// Alive
+				if (players[d].state == "alive") {
+					// Is a max hit queue'd to be animated?
+					if (players[d].displaymaxhit == true) {
+						players[d].displaymaxhit = false;
+						var num = Math.floor(Math.random()*5) + 1;
+						num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						var sidepop = document.createElement("div");
+						sidepop.setAttribute('id', players[d].divID + Date.now());
+						sidepop.setAttribute('class', 'player-side-popup');
+						sidepop.style.transform = 'rotate(' + num + 'deg)';
+						sidepop.innerHTML = players[d].maxhit + '<br />' + players[d].maxhitnum;
+						sidepop.style.top = -5;
+						document.getElementById(players[d].divID).appendChild(sidepop);
+						var sideleft = ($(sidepop, this).width()/2 * -1) - 40;
+						sidepop.style.left = sideleft;
+						sideleft = (sideleft/1.25);
+						
+						$(sidepop).delay(1500).animate({
+							'opacity' : 0,
+							'height': '50%',
+							'width': '15%',
+							'top': "25%",
+							'left': sideleft,
+							'fontSize': '50%'
+						}, 500, function(e){
+							$(sidepop).remove();
+						});
+					}
+				}
+				
+				// Dead
+				if (players[d].state == "dead") {
+					players[d].state = "alive";
+					ele.style.background = 'linear-gradient(90deg, rgba(200, 200, 200, .3) 0%, rgba(0,0,0,0.3) 50%)';
+					ele.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px rgba(200, 200, 200, .3)';
+					setTimeout(function() { 
+						ele.style.background = 'linear-gradient(90deg, ' + players[d].divRGBA + ' 0%, rgba(0,0,0,0.3) 50%)';
+						ele.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px ' + players[d].divRGBA;
+					}, 5000);
+					$(ele, this).effect('bounce', {direction: 'left', distance: '10'}, 500);
+					/* Overlay.dll does not support dynamically generated svgs
+					for (var i = 0; i < 3; i++) {
+						var num = Math.floor(Math.random() * 300);
+						var numw = Math.floor(Math.random() * (60 - 5 + 1) + 5);
+						var numh = Math.floor(Math.random() * (30 - 5 + 1) + 5);
+						var splat = document.createElement('div');
+						splat.setAttribute('id', players[d].divID + num + Date.now());
+						splat.setAttribute('class', 'bloodsplat');
+						splat.style.left = num + 'px';
+						splat.style.width = numw + 'px';
+						splat.style.height = numh + 'px';
+						splat.style.filter = 'url(#splatfilter' + num + ')';
+						var NS = "http://www.w3.org/2000/svg";
+						var svg = document.createElementNS(NS, 'svg');
+						var filter = document.createElementNS(NS, 'filter');
+						filter.setAttribute('id', 'splatfilter' + num);
+						var feturb = document.createElementNS(NS, 'feTurbulence');
+						feturb.setAttribute('type', 'fractalNoise');
+						feturb.setAttribute('baseFrequency', '0.1');
+						feturb.setAttribute('seed', num);
+						var fedisp = document.createElementNS(NS, 'feDisplacementMap');
+						fedisp.setAttribute('in', 'SourceGraphic');
+						fedisp.setAttribute('scale', '50');
+
+						filter.appendChild(feturb);
+						filter.appendChild(fedisp);
+						svg.appendChild(filter);
+						splat.appendChild(svg);
+						document.getElementById(players[d].divID).appendChild(splat);
+						$(splat).delay(2000).animate({
+							'opacity' : 0
+						}, 3000, function(e){
+						console.log('Removed?');
+							$(splat).remove();
+						});
+					}*/
+				}
+				
+				// Initialize
+				if (players[d].state == "initialize") {
+					$(ele, this).animate({right: 0}, 'fast', function(e){
+						players[d].state = "alive";
 					});
 				}
-								
+				
+				// Always animate sorting
 				var divHeight = 35;
 				var divOffset = (d * divHeight) + (d * 5) + 5;
-				
-				switch (players[d].state) {
-					case "initialize":
-						$(ele, this).animate({bottom: divOffset + 'px'}, 'fast');
-						$(ele, this).animate({right: '0'}, 'slow', function(e){
-							players[d].state = "alive";
-						});
-						break;
-					case "alive":
-						$(ele, this).animate({bottom: divOffset + 'px'}, 'fast');
-						break;
-					default:
-						break;
-				}
+				$(ele, this).animate({bottom: divOffset + 'px'}, 'fast');
 				
 				// Graph updates
 				if (players[d].name == "YOU" && players[d].dpsGraph.length % 3 === 0) {
@@ -460,7 +521,6 @@
 					graphCanvas.data.labels.push(graphx);
 					graphCanvas.data.datasets.forEach((dataset) => {
 						dataset.data.push(graphy);
-						console.log(graphy);
 					});
 					graphCanvas.update();
 					

@@ -1,0 +1,55 @@
+<style>
+body {
+  background-color: white;
+  padding: 1%;
+  overflow: hidden;
+}
+
+#cont {
+  width: 100%;
+  position: absolute;
+}
+
+.bloodsplat {
+  width: 35px;
+  height: 35px;
+  box-shadow: 0px 100px 15px 0px #f00;
+  position: absolute;
+  top: -100px;
+}
+</style>
+<div id="cont"></div>
+<script>
+for (var i = 0; i < 3; i++) {
+	var num = Math.floor(Math.random() * 300);
+  var numw = Math.floor(Math.random() * (35 - 5 + 1) + 5);
+  var numh = Math.floor(Math.random() * (35 - 5 + 1) + 5);
+  var splat = document.createElement("div");
+  splat.setAttribute("class", "bloodsplat");
+  splat.style.left = num+'px';
+  splat.style.width = numw+'px';
+  splat.style.height = numh+'px';
+  splat.style.filter = 'url(#splatfilter'+num+')';
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.createElementNS(NS, "svg");
+  var filter = document.createElementNS(NS, "filter");
+  filter.setAttribute("id", "splatfilter"+num);
+  var feturb = document.createElementNS(NS, "feTurbulence");
+  feturb.setAttribute("type", "fractalNoise");
+  feturb.setAttribute("baseFrequency", "0.1");
+  feturb.setAttribute("seed", num);
+  var fedisp = document.createElementNS(NS, "feDisplacementMap");
+  fedisp.setAttribute("in", "SourceGraphic");
+  fedisp.setAttribute("scale", "50");
+
+  filter.appendChild(feturb);
+  filter.appendChild(fedisp);
+  svg.appendChild(filter);
+  splat.appendChild(svg);
+  document.getElementById('cont').appendChild(splat);
+}
+if(!document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Image', '1.1')){
+  var bodyElement = document.getElementsByTagName("body")[0];
+  bodyElement.className += " noSvg";
+}
+</script>
