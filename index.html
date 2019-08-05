@@ -502,17 +502,17 @@
 					}
 				}
 				
+				// Always animate sorting, done before initializing to avoid akward prepositioning
+				var divHeight = 35;
+				var divOffset = (d * divHeight) + (d * 5) + 5;
+				$(ele, this).animate({bottom: divOffset + 'px'}, 'fast');
+				
 				// Initialize
 				if (players[d].state == "initialize") {
 					$(ele, this).animate({right: 0}, 'fast', function(e){
 						players[d].state = "alive";
 					});
 				}
-				
-				// Always animate sorting
-				var divHeight = 35;
-				var divOffset = (d * divHeight) + (d * 5) + 5;
-				$(ele, this).animate({bottom: divOffset + 'px'}, 'fast');
 				
 				// Graph updates
 				if (players[d].name == "YOU" && players[d].dpsGraph.length % 3 === 0) {
