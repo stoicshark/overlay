@@ -172,6 +172,7 @@
 		height: 35px;
 		box-shadow: 0px 100px 15px 0px #f00;
 		position: absolute;
+		opacity: 0.5;
 		top: -100px;
 	}
 	
@@ -391,8 +392,8 @@
 					document.getElementById('main').appendChild(ele);
 					players.push(newPlayer);
 					
-					/*Debug
-					$('#'+newPlayer.divID).click(function(){ 
+					/*Debug*/
+					/*$('#'+newPlayer.divID).click(function(){ 
 						newPlayer.state = "dead";
 					});*/
 				}
@@ -464,12 +465,12 @@
 						ele.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px ' + players[d].divRGBA;
 					}, 5000);
 					$(ele, this).effect('bounce', {direction: 'left', distance: '10'}, 500);
-					/* Overlay.dll does not support dynamically generated svgs
-					for (var i = 0; i < 3; i++) {
+					
+					for (let i = 0; i < 3; i++) {
 						var num = Math.floor(Math.random() * 300);
 						var numw = Math.floor(Math.random() * (60 - 5 + 1) + 5);
 						var numh = Math.floor(Math.random() * (30 - 5 + 1) + 5);
-						var splat = document.createElement('div');
+						let splat = document.createElement('div');
 						splat.setAttribute('id', players[d].divID + num + Date.now());
 						splat.setAttribute('class', 'bloodsplat');
 						splat.style.left = num + 'px';
@@ -493,13 +494,12 @@
 						svg.appendChild(filter);
 						splat.appendChild(svg);
 						document.getElementById(players[d].divID).appendChild(splat);
-						$(splat).delay(2000).animate({
+						$(splat, this).delay(2000).animate({
 							'opacity' : 0
 						}, 3000, function(e){
-						console.log('Removed?');
-							$(splat).remove();
+							$(splat, this).remove();
 						});
-					}*/
+					}
 				}
 				
 				// Initialize
