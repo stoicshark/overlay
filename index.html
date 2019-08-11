@@ -216,6 +216,8 @@
 <script src="lib/player.js" type="text/javascript"></script>
 <body>
 	<div id="updates">
+		<span style="font-family: voltage; font-size: 20px;">rev.5</span><br />
+		- Performance fixes<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.4</span><br />
 		- Critical hits will flash a display over player containers<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.3</span><br />
@@ -481,7 +483,7 @@
 						players[d].displaymaxhit = false;
 						var num = Math.floor(Math.random()*5) + 1;
 						num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
-						var sidepop = document.createElement("div");
+						let sidepop = document.createElement("div");
 						sidepop.setAttribute('id', 'maxhit' + players[d].divID + Date.now());
 						sidepop.setAttribute('class', 'player-side-popup');
 						sidepop.style.transform = 'rotate(' + num + 'deg)';
@@ -507,7 +509,7 @@
 					// Crit effect
 					if (players[d].displaycrit == true) {
 						players[d].displaycrit = false;
-						var critwave1 = document.createElement("div");
+						let critwave1 = document.createElement("div");
 						critwave1.setAttribute('id', 'crit' + players[d].divID + Date.now());
 						critwave1.setAttribute('class', 'critline');
 						critwave1.style.right = "0";
@@ -518,26 +520,24 @@
 						document.getElementById(players[d].divID).getElementsByClassName('player-effect-cont')[0].appendChild(critwave1);
 						
 						$(critwave1).animate({
-							'right': '100%',
-							'opacity': 0.3
-						}, 1000, function(e){
+							'right': '100%'
+						}, 500, function(e){
 							$(critwave1).remove();
 						});
 						
-						var critwave2 = document.createElement("div");
+						let critwave2 = document.createElement("div");
 						critwave2.setAttribute('id', 'crit' + players[d].divID + Date.now());
 						critwave2.setAttribute('class', 'critline');
 						critwave2.style.right = "0";
-						critwave2.style.width = '1px';
+						critwave2.style.width = '2px';
 						critwave2.style.height = '100%';
 						critwave2.style.top = 0;
-						critwave2.style.opacity = 0.8;
+						critwave2.style.opacity = 0.4;
 						document.getElementById(players[d].divID).getElementsByClassName('player-effect-cont')[0].appendChild(critwave2);
 						
 						$(critwave2).animate({
-							'right': '100%',
-							'opacity': 0.3
-						}, 2000, function(e){
+							'right': '100%'
+						}, 1500, function(e){
 							$(critwave2).remove();
 						});
 					}
