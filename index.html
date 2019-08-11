@@ -212,10 +212,14 @@
 <script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
 <script src="lib/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/chart.bundle.min.js" type="text/javascript"></script>
+<script src="lib/TweenMax.min.js" type="text/javascript"></script>
 <script src="lib/parse.js" type="text/javascript"></script>
 <script src="lib/player.js" type="text/javascript"></script>
 <body>
 	<div id="updates">
+		<span style="font-family: voltage; font-size: 20px;">rev.6</span><br />
+		- Added GSAP library, even more performance improvement<br />
+		- Improved death effect<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.5</span><br />
 		- Performance fixes<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.4</span><br />
@@ -383,9 +387,12 @@
 			// Hide updates and remove them
 			if (updates) {
 				updates == false;
-				$('#updates').animate({right: '-70%'}, 'fast', function(e){
-					$('#updates').remove();
+				TweenMax.to('#updates', 0.2, {
+						right: '-70%'
 				});
+				setTimeout(function(){
+					$('#updates').remove();
+				}, 200);
 			}
 		}
 		
@@ -445,9 +452,11 @@
 					players.push(newPlayer);
 					
 					/*Debug*/
-					/*$('#'+newPlayer.divID).click(function(){ 
-						newPlayer.displaycrit = true;
-					});*/
+					$('#'+newPlayer.divID).click(function(){ 
+						//newPlayer.displaymaxhit = true;
+						//newPlayer.displaycrit = true;
+						//newPlayer.state = 'dead';
+					});
 				}
 			}
 
@@ -492,9 +501,9 @@
 						document.getElementById(players[d].divID).appendChild(sidepop);
 						var sideleft = ($(sidepop, this).width()/2 * -1) - 40;
 						sidepop.style.left = sideleft;
-						sideleft = (sideleft/1.25);
+						sideleft = (sideleft/1.275);
 						
-						$(sidepop).delay(1500).animate({
+						$(sidepop).delay(1500).animate({ // JQuery does this better
 							'opacity' : 0,
 							'height': '50%',
 							'width': '15%',
@@ -504,6 +513,19 @@
 						}, 500, function(e){
 							$(sidepop).remove();
 						});
+						
+						/*TweenMax.to(sidepop, 0.5, {
+							top: "20%",
+							left: sideleft,
+							height: '50%',
+							width: '50%',
+							opacity: '0',
+							fontSize: '50%',
+							delay: '1.5',
+						});
+						setTimeout(function(){
+							$(sidepop, this).remove();
+						}, 2000);*/
 					}
 					
 					// Crit effect
@@ -519,27 +541,13 @@
 						critwave1.style.opacity = 0.8;
 						document.getElementById(players[d].divID).getElementsByClassName('player-effect-cont')[0].appendChild(critwave1);
 						
-						$(critwave1).animate({
-							'right': '100%'
-						}, 500, function(e){
-							$(critwave1).remove();
+						TweenMax.to(critwave1, 1, {
+							right: '100%',
+							ease: Power2.easeOut
 						});
-						
-						let critwave2 = document.createElement("div");
-						critwave2.setAttribute('id', 'crit' + players[d].divID + Date.now());
-						critwave2.setAttribute('class', 'critline');
-						critwave2.style.right = "0";
-						critwave2.style.width = '2px';
-						critwave2.style.height = '100%';
-						critwave2.style.top = 0;
-						critwave2.style.opacity = 0.4;
-						document.getElementById(players[d].divID).getElementsByClassName('player-effect-cont')[0].appendChild(critwave2);
-						
-						$(critwave2).animate({
-							'right': '100%'
-						}, 1500, function(e){
-							$(critwave2).remove();
-						});
+						setTimeout(function(){
+							$(critwave1, this).remove();
+						}, 1000);
 					}
 				}
 				
@@ -549,11 +557,13 @@
 					let playerRGBA = players[d].divRGBA;
 					ele.style.background = 'linear-gradient(90deg, rgba(200, 200, 200, .3) 0%, rgba(0,0,0,0.3) 50%)';
 					ele.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px rgba(200, 200, 200, .3)';
-					setTimeout(function() { 
-						ele.style.background = 'linear-gradient(90deg, ' + playerRGBA + ' 0%, rgba(0,0,0,0.3) 50%)';
-						ele.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px ' + playerRGBA;
-					}, 5000);
-					$(ele, this).effect('bounce', {direction: 'left', distance: '10'}, 500);
+					
+					TweenMax.to(ele, 3, {
+						background: 'linear-gradient(90deg, ' + playerRGBA + ' 0%, rgba(0,0,0,0.3) 50%)',
+						boxShadow: '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px ' + playerRGBA,
+						delay: '2'
+					});
+					TweenMax.fromTo(ele, 4, { rotation: 0.5}, {rotation: 0, ease:Elastic.easeOut.config(5, 0.01)});
 					
 					for (let i = 0; i < 3; i++) {
 						var num = Math.floor(Math.random() * 300);
@@ -577,33 +587,44 @@
 						var fedisp = document.createElementNS(NS, 'feDisplacementMap');
 						fedisp.setAttribute('in', 'SourceGraphic');
 						fedisp.setAttribute('scale', '50');
-
 						filter.appendChild(feturb);
 						filter.appendChild(fedisp);
 						svg.appendChild(filter);
 						splat.appendChild(svg);
 						document.getElementById(players[d].divID).appendChild(splat);
-						$(splat, this).delay(2000).animate({
-							'opacity' : 0
-						}, 3000, function(e){
-							$(splat, this).remove();
+						
+						TweenMax.to(splat, 3, {
+							opacity: '0',
+							delay: '2'
 						});
+						setTimeout(function(){
+							$(splat, this).remove();
+						}, 5000);
 					}
 				}
 				
 				// Always animate sorting
 				var divHeight = 30;
 				var divOffset = (d * divHeight) + (d * 5) + 5;
-				if (players[d].state != "initialize") {
-					$(ele, this).animate({bottom: divOffset + 'px'}, 'fast');
+				var curOffset = ele.style.bottom;
+				if (players[d].state != "initialize" && curOffset != divOffset) {
+					TweenMax.to(ele, 0.2, {
+						bottom: divOffset + 'px'
+					});
 				}
 				
 				// Initialize and move, not animated
 				if (players[d].state == "initialize") {
 					ele.style.bottom = divOffset + 'px';
-					$(ele, this).animate({right: 0}, 'fast', function(e){
+					$(ele, this).animate({right: 0}, 200, function(e){ // JQuery does this better
 						players[d].state = "alive";
 					});
+					/*TweenMax.to(ele, 0.2, {
+						right: '0'
+					});
+					setTimeout(function(){
+						players[d].state = "alive";
+					}, 200);*/
 				}
 				
 				// Graph updates
