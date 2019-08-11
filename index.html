@@ -203,6 +203,8 @@
 <script src="lib/player.js" type="text/javascript"></script>
 <body>
 	<div id="updates">
+		<span style="font-family: voltage; font-size: 20px;">rev.3</span><br />
+		- Graph fixes<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.2</span><br />
 		- Better letter spacing for the reduced containers<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.1</span><br />
@@ -311,14 +313,6 @@
 				ele.removeChild(ele.firstChild);
 			}
 			
-			// Hide updates and remove them
-			if (updates) {
-				updates == false;
-				$('#updates').animate({right: '-70%'}, 'fast', function(e){
-					$('#updates').remove();
-				});
-			}
-			
 			graphCanvas.clear();
 			graphCanvas.destroy();
 			$('#graph').remove();
@@ -368,6 +362,14 @@
 				}
 			);
 			graphCanvas.update();
+			
+			// Hide updates and remove them
+			if (updates) {
+				updates == false;
+				$('#updates').animate({right: '-70%'}, 'fast', function(e){
+					$('#updates').remove();
+				});
+			}
 		}
 		
 		//if (true) {
