@@ -94,6 +94,7 @@
 		color: white;
 		right: 0;
 		bottom: 69px;
+		overflow: hidden;
 	}
 	
 	.playerdiv {
@@ -151,16 +152,18 @@
 		height: 2px;
 	}
 	
-	.player-class-img-cont {
+	.player-effect-cont {
 		position: absolute;
-		top: -5;
-		left: 60%;
-		height: 35px;
+		width: 100%;
+		height: 100%;
 		overflow: hidden;
 	}
 	
 	.player-class-img {
+		position: absolute;
 		transform: rotate(10deg);
+		right: 30%;
+		top: -5;
 		width: 45px;
 		height: 45px;
 		opacity: .6;
@@ -189,6 +192,16 @@
 		top: -100px;
 	}
 	
+	.critline {
+		position: absolute;
+		-webkit-filter: blur(5px);
+		-moz-filter: blur(5px);
+		-o-filter: blur(5px);
+		-ms-filter: blur(5px);
+		filter: blur(5px);
+		background-color: #fff;
+	}
+	
 	.resizeHandle {
 		background-image: url(images/handle.png);
 		background-position: bottom right;
@@ -203,6 +216,8 @@
 <script src="lib/player.js" type="text/javascript"></script>
 <body>
 	<div id="updates">
+		<span style="font-family: voltage; font-size: 20px;">rev.4</span><br />
+		- Critical hits will flash a display over player containers<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.3</span><br />
 		- Graph fixes<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.2</span><br />
@@ -412,7 +427,7 @@
 					
 					var eleHTML = "";
 					
-					eleHTML += '<div class="player-class-img-cont"><div class="player-class-img" style="background-image: url(images/' + newPlayer.job + '.png);"></div></div>';
+					eleHTML += '<div class="player-effect-cont"><div class="player-class-img" style="background-image: url(images/' + newPlayer.job + '.png);"></div></div>';
 					eleHTML += '<span class="player-name">' + newPlayer.name + '</span>';
 					eleHTML += '<span class="player-dps-base">' + newPlayer.dpsbase + '</span><span class="player-dps-dec">.' + newPlayer.dpsdec + '</span>';
 					eleHTML += '<span class="player-stat crit" style="left: 25%; bottom: 1; margin-left: 3px;">' + newPlayer.crit + '</span>';
@@ -429,7 +444,7 @@
 					
 					/*Debug*/
 					/*$('#'+newPlayer.divID).click(function(){ 
-						newPlayer.state = "dead";
+						newPlayer.displaycrit = true;
 					});*/
 				}
 			}
@@ -461,13 +476,13 @@
 				
 				// Alive
 				if (players[d].state == "alive") {
-					// Is a max hit queue'd to be animated?
+					// Maxhit effect
 					if (players[d].displaymaxhit == true) {
 						players[d].displaymaxhit = false;
 						var num = Math.floor(Math.random()*5) + 1;
 						num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
 						var sidepop = document.createElement("div");
-						sidepop.setAttribute('id', players[d].divID + Date.now());
+						sidepop.setAttribute('id', 'maxhit' + players[d].divID + Date.now());
 						sidepop.setAttribute('class', 'player-side-popup');
 						sidepop.style.transform = 'rotate(' + num + 'deg)';
 						sidepop.innerHTML = players[d].maxhit + '<br />' + players[d].maxhitnum;
@@ -486,6 +501,44 @@
 							'fontSize': '50%'
 						}, 500, function(e){
 							$(sidepop).remove();
+						});
+					}
+					
+					// Crit effect
+					if (players[d].displaycrit == true) {
+						players[d].displaycrit = false;
+						var critwave1 = document.createElement("div");
+						critwave1.setAttribute('id', 'crit' + players[d].divID + Date.now());
+						critwave1.setAttribute('class', 'critline');
+						critwave1.style.right = "0";
+						critwave1.style.width = '5px';
+						critwave1.style.height = '100%';
+						critwave1.style.top = 0;
+						critwave1.style.opacity = 0.8;
+						document.getElementById(players[d].divID).getElementsByClassName('player-effect-cont')[0].appendChild(critwave1);
+						
+						$(critwave1).animate({
+							'right': '100%',
+							'opacity': 0.3
+						}, 1000, function(e){
+							$(critwave1).remove();
+						});
+						
+						var critwave2 = document.createElement("div");
+						critwave2.setAttribute('id', 'crit' + players[d].divID + Date.now());
+						critwave2.setAttribute('class', 'critline');
+						critwave2.style.right = "0";
+						critwave2.style.width = '1px';
+						critwave2.style.height = '100%';
+						critwave2.style.top = 0;
+						critwave2.style.opacity = 0.8;
+						document.getElementById(players[d].divID).getElementsByClassName('player-effect-cont')[0].appendChild(critwave2);
+						
+						$(critwave2).animate({
+							'right': '100%',
+							'opacity': 0.3
+						}, 2000, function(e){
+							$(critwave2).remove();
 						});
 					}
 				}
