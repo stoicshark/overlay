@@ -1,222 +1,257 @@
 <html>
 <head>
-<title></title>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-<meta name="robots" content="noindex, nofollow"/>
-<meta name="googlebot" content="noindex, nofollow"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Parser</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<meta name="robots" content="noindex, nofollow"/>
+	<meta name="googlebot" content="noindex, nofollow"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<style>
+		@font-face{ 
+			font-family: 'voltage';
+			src: url(resources/voltage.woff);
+		}
+		
+		@font-face{ 
+			font-family: 'aeromatics';
+			src: url(resources/aeromatics.woff);
+		}
+		
+		canvas{
+			margin: 0 auto;
+		}
+
+		body, html {
+			margin: 0;
+			overflow: hidden;
+			-webkit-user-select: none;
+		}
+		
+		#menu {
+			position: absolute;
+			width: 26px;
+			height: 50px;
+		}
+		
+		.menu-item {
+			position: absolute;
+			width: 24px;
+			height: 24px;
+			background-color: rgba(0,0,0,.3);
+			background-repeat: no-repeat;
+			background-size: 100% 100%;
+		}
+		
+		#dpsgraph-html {
+			position: absolute;
+			width: 100%;
+			height: 50px;
+			font-family: "aeromatics";
+			font-size: 15px;
+			color: white;
+			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
+		}
+		
+		#dpsgraph {
+			background-color: rgba(0,0,0,.3);
+			position: absolute;
+			width: 100%;
+			height: 50px;
+		}
+		
+		#legend {
+			background-color: rgba(0,0,0,.3);
+			position: absolute;
+			height: 15px;
+			width: 100%;
+			font-family: "aeromatics";
+			font-size: 12px;
+			color: white;
+			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
+		}
+		
+		.span-absolute {
+			position: absolute;
+		}
+		
+		#main {
+			position: absolute;
+			display: table-cell;
+			vertical-align: bottom;
+			height: 100%;
+			width: 100%;
+		}
+		
+		#updates-html {
+			position: absolute;
+			background-color: rgba(0, 0 ,0 , .3);
+			font-family: "aeromatics";
+			font-size: 13px;
+			padding: 5px;
+			width: calc(100% - 110px);
+			height: calc(100% - 300px);
+			color: white;
+			overflow-y: scroll;
+		}
+		
+		::-webkit-scrollbar {
+		  width: 10px;
+		}
+
+		::-webkit-scrollbar-track {
+		  background: #333; 
+		}
+		 
+		::-webkit-scrollbar-thumb {
+		  background: #888; 
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+		  background: #fff; 
+		}
+		
+		.playerdiv {
+			position: absolute;
+		}
+		
+		.player-name {
+			position: absolute;
+			top: -1;
+			left: 25%;
+			text-align: left;
+			font-family: "voltage";
+			letter-spacing: 1px;
+			font-size: 17px;
+			color: white;
+			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
+		}
+		
+		.player-dps-base {
+			position: relative;
+			width: 25%;
+			left: 5;
+			top: 1;
+			font-family: "voltage";
+			font-size: 28px;
+			color: white;
+			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
+			overflow: hidden;
+		}
+		
+		.player-dps-dec {
+			position: relative;
+			right: -5;
+			top: 1;
+			font-family: "voltage";
+			font-size: 20px;
+			color: white;
+			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
+		}
+		
+		.player-stat {
+			position: absolute;
+			font-family: "aeromatics";
+			font-size: 12px;
+			color: white;
+			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
+		}
+		
+		.player-dps-bar {
+			position: absolute;
+			bottom: 0;
+			background:  rgba(255,255,255,.5);
+			height: 2px;
+		}
+		
+		.player-effect-cont {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		
+		.player-class-img {
+			position: absolute;
+			transform: rotate(10deg);
+			right: 30%;
+			top: -5;
+			width: 45px;
+			height: 45px;
+			opacity: .6;
+			background-repeat: no-repeat;
+			background-size: 100% 100%;
+		}
+		
+		.player-side-popup {
+			position: absolute;
+			text-align: center;
+			font-family: "voltage";
+			font-size: 21px;
+			color: white;
+			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
+			white-space: nowrap;
+		}
+		
+		.bloodsplat {
+			width: 30px;
+			height: 30px;
+			box-shadow: 0px 100px 15px 0px #f00;
+			position: absolute;
+			opacity: 0.5;
+			top: -100px;
+		}
+		
+		.critline {
+			position: absolute;
+			-webkit-filter: blur(5px);
+			-moz-filter: blur(5px);
+			-o-filter: blur(5px);
+			-ms-filter: blur(5px);
+			filter: blur(5px);
+			background-color: #fff;
+		}
+		
+		.resizeHandle {
+			background-image: url(images/handle.png);
+			background-position: bottom right;
+			background-repeat: no-repeat;
+			box-sizing: border-box;
+		}
+	</style>
+	<script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
+	<script src="lib/chart.bundle.min.js" type="text/javascript"></script>
+	<script src="lib/TweenMax.min.js" type="text/javascript"></script>
+	<script src="lib/config.js" type="text/javascript"></script>
+	<script src="lib/parse.js" type="text/javascript"></script>
+	<script src="lib/player.js" type="text/javascript"></script>
 </head>
-<style>
-	@font-face{ 
-		font-family: 'voltage';
-		src: url(resources/voltage.woff);
-	}
-	
-	@font-face{ 
-		font-family: 'aeromatics';
-		src: url(resources/aeromatics.woff);
-	}
-	
-	canvas{
-		margin: 0 auto;
-    }
-
- 	* {
-		-webkit-user-select: none; /* Safari */        
-		-moz-user-select: none; /* Firefox */
-		-ms-user-select: none; /* IE10+/Edge */
-		user-select: none; /* Standard */
-	}
-
-	body, html {
-		margin: 0;
-		overflow: hidden;
-	}
-	
-	#dpsgraph-html {
-		position: absolute;
-		width: calc(100% - 50px);
-		height: 50px;
-		bottom: 0;
-		right: 0;
-		font-family: "aeromatics";
-		font-size: 15px;
-		color: white;
-		text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
-	}
-	
-	#dpsgraph {
-		background-color: rgba(0,0,0,.3);
-		position: absolute;
-		width: calc(100% - 50px);
-		height: 50px;
-		bottom: 0;
-		right: 0;
-	}
-	
-	#legend {
-		background-color: rgba(0,0,0,.3);
-		position: absolute;
-		width: 70%;
-		height: 15px;
-		bottom: 52;
-		right: 0;
-		font-family: "aeromatics";
-		font-size: 12px;
-		color: white;
-		text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
-	}
-	
-	.span-absolute {
-		position: absolute;
-	}
-	
-	#main {
-		//background-color: rgba(100,100,100,.2);
-		position: absolute;
-		display: table-cell;
-		vertical-align: bottom;
-		height: 100%;
-		width: 100%;
-		right: 0;
-		bottom: 67px;
-		//overflow: hidden;
-	}
-	
-	#updates {
-		position: absolute;
-		background-color: rgba(0, 0 ,0 , .3);
-		font-family: "aeromatics";
-		font-size: 13px;
-		padding: 5px;
-		width: calc(70% - 10px);
-		height: 150px;
-		color: white;
-		right: 0;
-		bottom: 69px;
-		overflow: hidden;
-	}
-	
-	.playerdiv {
-		position: absolute;
-		background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.3) 50%);
-	}
-	
-	.player-name {
-		position: absolute;
-		top: -1;
-		left: 25%;
-		text-align: left;
-		font-family: "voltage";
-		letter-spacing: 1px;
-		font-size: 17px;
-		color: white;
-		text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
-	}
-	
-	.player-dps-base {
-		position: relative;
-		width: 25%;
-		left: 5;
-		top: 1;
-		font-family: "voltage";
-		font-size: 28px;
-		color: white;
-		text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
-		overflow: hidden;
-	}
-	
-	.player-dps-dec {
-		position: relative;
-		right: -5;
-		top: 1;
-		font-family: "voltage";
-		font-size: 20px;
-		color: white;
-		text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
-	}
-	
-	.player-stat {
-		position: absolute;
-		font-family: "aeromatics";
-		font-size: 12px;
-		color: white;
-		text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
-	}
-	
-	.player-dps-bar {
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		background:  rgba(255,255,255,.5);
-		height: 2px;
-	}
-	
-	.player-effect-cont {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		overflow: hidden;
-	}
-	
-	.player-class-img {
-		position: absolute;
-		transform: rotate(10deg);
-		right: 30%;
-		top: -5;
-		width: 45px;
-		height: 45px;
-		opacity: .6;
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-	}
-	
-	.player-side-popup {
-		position: absolute;
-		top: 0;
-		left: 0;
-		text-align: center;
-		font-family: "voltage";
-		font-size: 21px;
-		color: white;
-		text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
-		white-space: nowrap;
-	}
-	
-	.bloodsplat {
-		width: 30px;
-		height: 30px;
-		box-shadow: 0px 100px 15px 0px #f00;
-		position: absolute;
-		opacity: 0.5;
-		top: -100px;
-	}
-	
-	.critline {
-		position: absolute;
-		-webkit-filter: blur(5px);
-		-moz-filter: blur(5px);
-		-o-filter: blur(5px);
-		-ms-filter: blur(5px);
-		filter: blur(5px);
-		background-color: #fff;
-	}
-	
-	.resizeHandle {
-		background-image: url(images/handle.png);
-		background-position: bottom right;
-		background-repeat: no-repeat;
-		box-sizing: border-box;
-	}
-</style>
-<script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
-<script src="lib/jquery-ui.min.js" type="text/javascript"></script>
-<script src="lib/chart.bundle.min.js" type="text/javascript"></script>
-<script src="lib/TweenMax.min.js" type="text/javascript"></script>
-<script src="lib/parse.js" type="text/javascript"></script>
-<script src="lib/player.js" type="text/javascript"></script>
 <body>
-	<div id="updates">
+	<div id="legend">
+	</div>
+	<div id="dpsgraph">	
+		<canvas id="graph" height="50" width="100%"></canvas>
+	</div>
+	<div id="dpsgraph-html">
+	</div>
+	<div id="menu">
+	</div>
+	<div id="main">
+	</div>
+	<div id="updates-html">
+		<span style="font-family: voltage; font-size: 20px;">rev.7 (The scroll down for more, update)</span><br />
+		- Disable clickthru temporarily to scroll and click things<br />
+		- Scrollable updates<br />
+		- UI recalculated on startup, you may need to resize<br />
+		- Config/options framework, disable clickthrough on overlay plugin to use<br />
+		- Config/options are saved with cookies, I'll try my best to not have them reset with every update but no promises<br />
+		- Default layout changed (top and left), enter options for the old layout (bottom and right)<br />
+		- Config button added to UI<br />
+		- Reload/Reboot button added to UI(Click X to hard reset the UI, this is temporary)<br />
+		- Basic general options added for debugging<br />
+		- Basic layout options added for debugging<br />
+		- Basic effect options added for debugging<br />
+		- Basic options saving functionality added<br />
+		- Various fixes to effects to take into account resizing<br />
+		- More performance tweaks<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.6</span><br />
 		- Added GSAP library, even more performance improvement<br />
 		- Improved death effect<br />
@@ -234,21 +269,32 @@
 		- Fix (maybe) for wrong color displayed when players are generated<br />
 		- Performance tweaks
 	</div>
-	<div id="main">
-	</div>
-	<div id="legend">
-	</div>
-	<div id="dpsgraph">	
-		<canvas id="graph" height="50" width="100%"></canvas>
-	</div>
-	<div id="dpsgraph-html">
-	</div>
 <script>
 	'use strict';
-	var udpates = true;
+	// Config things
+	var config = new Config();
+	// Is there a saved config?
+	if (localStorage.getItem('config') === null) {
+		localStorage.setItem('config', JSON.stringify(config)); // There you go
+	} else {
+		var parseConfig = JSON.parse(localStorage.getItem('config'));
+		config.update(parseConfig); // Populate the current config with saved values
+		localStorage.setItem('config', JSON.stringify(config)); // Save everything in case there's something new
+	}
+	
+	// Check if configuration is saved
+	localStorage.setItem('config-saved', false);
+	setInterval(function(){	
+		if (localStorage.getItem('config-saved') == "true") {
+			location.reload(); // Hard reload the parser - for now
+		}
+	}, 500);
+	
+	var updates = true;
 	var players = [];
 	var activeGate = false;
 	var topDamage = 0;
+	
 
 	var ctx = document.getElementById('graph').getContext('2d');
 	var graphCanvas = new Chart(ctx, 
@@ -295,6 +341,80 @@
 		}
 	);
 	
+	// Initial setup
+	
+	// Should containers fill the main window?
+	if (config.graphFill) {
+		document.getElementById('dpsgraph').style.width = 'calc(100% - 27px)';
+		document.getElementById('dpsgraph-html').style.width = 'calc(100% - 27px)';
+	} else {
+		document.getElementById('dpsgraph').style.width = 'calc(100% - 126px)';
+		document.getElementById('dpsgraph-html').style.width = 'calc(100% - 126px)';
+	}
+	if (config.playerFill) {
+		document.getElementById('legend').style.width = '100%';
+		document.getElementById('updates-html').style.width = 'calc(100% - 10px)';
+	} else {
+		document.getElementById('legend').style.width = 'calc(100% - 100px)';
+		document.getElementById('updates-html').style.width = 'calc(100% - 110px)';
+	}
+	
+	// Vertical and horizontal layout setup
+	if (config.layoutVertical) {
+		document.getElementById('dpsgraph').style.top = '0';
+		document.getElementById('dpsgraph-html').style.top = '0';
+		document.getElementById('legend').style.top = '53';
+		document.getElementById('main').style.top = '68';
+		document.getElementById('menu').style.top = '0';
+		document.getElementById('updates-html').style.top = '71';
+	} else {
+		document.getElementById('dpsgraph').style.bottom = '0';
+		document.getElementById('dpsgraph-html').style.bottom = '0';
+		document.getElementById('legend').style.bottom = '53';
+		document.getElementById('main').style.bottom = '68';
+		document.getElementById('menu').style.bottom = '0';
+		document.getElementById('updates-html').style.bottom = '71';
+	}
+	
+	if (config.layoutHorizontal) {
+		document.getElementById('dpsgraph').style.left = '26';
+		document.getElementById('dpsgraph-html').style.left = '26';
+		document.getElementById('legend').style.left = '0';
+		document.getElementById('main').style.left = '0';
+		document.getElementById('menu').style.left = '0';
+		document.getElementById('updates-html').style.left = '0';
+	} else {
+		document.getElementById('dpsgraph').style.right = '0';
+		document.getElementById('dpsgraph-html').style.right = '0';
+		document.getElementById('legend').style.right = '0';
+		document.getElementById('main').style.right = '0';
+		document.getElementById('menu').style.right = $('#dpsgraph-html').width();
+		document.getElementById('updates-html').style.right = '0';
+	}
+	
+	let optionsWin = null;
+	// Create menu items
+	var menu1 = document.createElement("div");
+	menu1.setAttribute('class', 'menu-item');
+	menu1.setAttribute('id', 'menu-options');
+	menu1.style.backgroundImage = 'url(images/options.png)';
+	menu1.style.top = '0';
+	document.getElementById('menu').appendChild(menu1);
+	$('#menu-options').click(function(){
+		optionsWin = window.open('options.html', 'oWin', 'width=700, height=400,  resizable=no');
+	});
+	
+	var menu2 = document.createElement("div");
+	menu2.setAttribute('class', 'menu-item');
+	menu2.setAttribute('id', 'menu-reload');
+	menu2.style.backgroundImage = 'url(images/x.png)';
+	menu2.style.top = '26';
+	document.getElementById('menu').appendChild(menu2);
+	$('#menu-reload').click(function(){
+		localStorage.clear();
+		location.reload();
+	});
+	
 	// Event listener from ACT
 	document.addEventListener("onOverlayDataUpdate", function (e) {
 		update(e.detail);
@@ -302,8 +422,7 @@
 	
 	// UPDATE
 	function update(rawdata) {
-		var data = new Data(rawdata);		
-		var elem = document.getElementById('graph');
+		var data = new Data(rawdata);
 		
 		// Display Legend
 		var ele = document.getElementById('legend');
@@ -384,15 +503,10 @@
 			);
 			graphCanvas.update();
 			
-			// Hide updates and remove them
+			// Remove updates
 			if (updates) {
-				updates == false;
-				TweenMax.to('#updates', 0.2, {
-						right: '-70%'
-				});
-				setTimeout(function(){
-					$('#updates').remove();
-				}, 200);
+				updates = false;
+				$('#updates-html').remove();
 			}
 		}
 		
@@ -408,28 +522,48 @@
 					
 					switch (newPlayer.role) {
 						case "dps":
-							newPlayer.divRGBA = "rgba(190, 50, 120, .3)";
+							newPlayer.divRGBA = config.dpsRGBA;
 							break;
 						case "tank":
-							newPlayer.divRGBA = "rgba(50, 80, 255, .3)";
+							newPlayer.divRGBA = config.tankRGBA;
 							break;
 						case "healer":
-							newPlayer.divRGBA = "rgba(80, 185, 155, .3)";
+							newPlayer.divRGBA = config.healerRGBA;
 							break;
 						case "limit break":
-							newPlayer.divRGBA = "rgba(200, 200, 100, .3)";
+							newPlayer.divRGBA = config.limitRGBA;
 							break;
 						default:
-							newPlayer.divRGBA = "rgba(200, 200, 200, .3)";
+							newPlayer.divRGBA = config.defaultRGBA;
 					}
 					
 					// Make a new div element
 					let newEle = document.createElement("div");
 					newEle.setAttribute('id', newPlayer.divID);
 					newEle.setAttribute('class', 'playerdiv');
-					newEle.style.right = '-70%';
-					newEle.style.bottom = '0';
-					newEle.style.width = '70%';
+					
+					if (config.playerFill) {
+						newEle.style.width = '100%';
+						if (config.layoutHorizontal) {
+							newEle.style.left = '-100%';
+						} else {
+							newEle.style.right = '-100%';
+						}
+					} else {
+						newEle.style.width = 'calc(100% - 100px)';
+						if (config.layoutHorizontal) {
+							newEle.style.left = 'calc(-100% + 100px)';
+						} else {
+							newEle.style.right = 'calc(-100% + 100px)';
+						}
+					}
+					
+					if (config.layoutVertical) {
+						newEle.style.top = '3';
+					} else {
+						newEle.style.bottom = '0';
+					}
+					
 					newEle.style.height = '30px';
 					newEle.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px ' + newPlayer.divRGBA;
 					newEle.style.background = 'linear-gradient(90deg, ' + newPlayer.divRGBA + ' 0%, rgba(0,0,0,0.3) 50%)';
@@ -469,6 +603,7 @@
 			players.sort(function(a, b) {
 				return a.dps - b.dps;
 			});
+			if (config.layoutVertical) players.reverse();
 			
 			// Animation
 			for (let d in players) {
@@ -485,10 +620,16 @@
 				$('#' + players[d].divID + ' .player-stat.maxhit').html(players[d].maxhit + '<br />' + players[d].maxhitnum);
 				$('#' + players[d].divID + ' .player-dps-bar').width(dpsbarwidth + '%');
 				
+				if (config.layoutHorizontal) {
+					$('#' + players[d].divID + ' .player-dps-bar').css('left', '0');
+				} else {
+					$('#' + players[d].divID + ' .player-dps-bar').css('right', '0');
+				}
+				
 				// Alive
 				if (players[d].state == "alive") {
 					// Maxhit effect
-					if (players[d].displaymaxhit == true) {
+					if (players[d].displaymaxhit == true && !config.disableMaxHit && !config.playerFill) {
 						players[d].displaymaxhit = false;
 						var num = Math.floor(Math.random()*5) + 1;
 						num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
@@ -499,20 +640,36 @@
 						sidepop.innerHTML = players[d].maxhit + '<br />' + players[d].maxhitnum;
 						sidepop.style.top = -10;
 						document.getElementById(players[d].divID).appendChild(sidepop);
-						var sideleft = ($(sidepop, this).width()/2 * -1) - 40;
-						sidepop.style.left = sideleft;
-						sideleft = (sideleft/1.275);
-						
-						$(sidepop).delay(1500).animate({ // JQuery does this better
-							'opacity' : 0,
-							'height': '50%',
-							'width': '15%',
-							'top': "25%",
-							'left': sideleft,
-							'fontSize': '50%'
-						}, 500, function(e){
-							$(sidepop).remove();
-						});
+						var sideOffset = '';
+						if (config.layoutHorizontal) {
+							sideOffset = $(sidepop, this).width()/2 * -1;
+							sidepop.style.right = sideOffset - 40;
+							sideOffset = (sideOffset/2) - 40;
+							$(sidepop).delay(1500).animate({ // JQuery does this better
+								'opacity' : 0,
+								'height': '50%',
+								'width': '15%',
+								'top': "25%",
+								'right': sideOffset,
+								'fontSize': '50%'
+							}, 500, function(e){
+								$(sidepop).remove();
+							});
+						} else {
+							sideOffset = $(sidepop, this).width()/2 * -1;
+							sidepop.style.left = sideOffset - 40;
+							sideOffset = sideOffset/2 - 40;
+							$(sidepop).delay(1500).animate({ // JQuery does this better
+								'opacity' : 0,
+								'height': '50%',
+								'width': '15%',
+								'top': "25%",
+								'left': sideOffset,
+								'fontSize': '50%'
+							}, 500, function(e){
+								$(sidepop).remove();
+							});
+						}
 						
 						/*TweenMax.to(sidepop, 0.5, {
 							top: "20%",
@@ -566,9 +723,9 @@
 					TweenMax.fromTo(ele, 4, { rotation: 0.5}, {rotation: 0, ease:Elastic.easeOut.config(5, 0.01)});
 					
 					for (let i = 0; i < 3; i++) {
-						var num = Math.floor(Math.random() * 300);
+						var num = Math.floor(Math.random() * ele.clientWidth);
 						var numw = Math.floor(Math.random() * (60 - 5 + 1) + 5);
-						var numh = Math.floor(Math.random() * (30 - 5 + 1) + 5);
+						var numh = Math.floor(Math.random() * (ele.clientHeight - 5 + 1) + 5);
 						let splat = document.createElement('div');
 						splat.setAttribute('id', players[d].divID + num + Date.now());
 						splat.setAttribute('class', 'bloodsplat');
@@ -591,7 +748,7 @@
 						filter.appendChild(fedisp);
 						svg.appendChild(filter);
 						splat.appendChild(svg);
-						document.getElementById(players[d].divID).appendChild(splat);
+						ele.appendChild(splat);
 						
 						TweenMax.to(splat, 3, {
 							opacity: '0',
@@ -605,20 +762,51 @@
 				
 				// Always animate sorting
 				var divHeight = 30;
-				var divOffset = (d * divHeight) + (d * 5) + 5;
-				var curOffset = ele.style.bottom;
+				var divOffset = '';
+				var curOffset = '';
+				
+				if (config.layoutVertical) {
+					divOffset = (d * divHeight) + (d * 5) + 2;
+					curOffset = ele.style.top;
+				} else {
+					divOffset = (d * divHeight) + (d * 5) + 5;
+					curOffset = ele.style.bottom;
+				}
+				
 				if (players[d].state != "initialize" && curOffset != divOffset) {
-					TweenMax.to(ele, 0.2, {
-						bottom: divOffset + 'px'
-					});
+					if (config.layoutVertical) {
+						TweenMax.to(ele, 0.2, {
+							top: divOffset + 'px'
+						});
+					} else {
+						TweenMax.to(ele, 0.2, {
+							bottom: divOffset + 'px'
+						});
+					}
 				}
 				
 				// Initialize and move, not animated
 				if (players[d].state == "initialize") {
-					ele.style.bottom = divOffset + 'px';
-					$(ele, this).animate({right: 0}, 200, function(e){ // JQuery does this better
-						players[d].state = "alive";
-					});
+					if (config.layoutVertical) {
+						ele.style.top = divOffset + 'px';
+					} else {
+						ele.style.bottom = divOffset + 'px';
+					}
+					
+					if (config.layoutHorizontal) {
+						$(ele, this).animate({ // JQuery does this better
+							'left': '0'
+						}, 200, function(e){
+							players[d].state = "alive";
+						});
+					} else {
+						$(ele, this).animate({ // JQuery does this better
+							'right': '0'
+						}, 200, function(e){
+							players[d].state = "alive";
+						});
+					}
+
 					/*TweenMax.to(ele, 0.2, {
 						right: '0'
 					});
