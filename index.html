@@ -35,7 +35,12 @@
 			background-size: 100% 100%;
 		}
 		
-		#dpsgraph-html {
+		#menu {
+			position: absolute;
+			left: 0;
+		}
+		
+		#graph-html {
 			position: absolute;
 			width: calc(100% - 26px);
 			right: 0;
@@ -233,12 +238,19 @@
 		<div id="graph-cont">	
 			<canvas id="graph" height="50" width="100%"></canvas>
 		</div>
-		<div id="dpsgraph-html">
+		<div id="graph-html">
+		</div>
+		<div id="menu">
 		</div>
 	</div>
 	<div id="main">
 	</div>
 	<div id="updates-html">
+		<span style="font-family: voltage; font-size: 20px;">rev.9</span><br />
+		- Menu icons hide during combat, on by default<br />
+		- disableMaxHit changed to showMaxhits<br />
+		- All if not, most current effects can now be turned on or off<br />
+		- Various css tweaks
 		<span style="font-family: voltage; font-size: 20px;">rev.8</span><br />
 		- Several severe resizing bugs fixed<br />
 		- Correction in update notes, saves are done through localstorage not cookies<br />
@@ -351,7 +363,6 @@
 	// Should containers fill the main window?
 	if (config.graphFill) {
 		document.getElementById('header').style.width = '100%';
-		//document.getElementById('graph-cont').style.width = '100%';
 	} else {
 		document.getElementById('header').style.width = 'calc(100% - 100px)';
 	}
@@ -395,7 +406,7 @@
 	menu1.setAttribute('id', 'menu-options');
 	menu1.style.backgroundImage = 'url(images/options.png)';
 	menu1.style.top = '0';
-	document.getElementById('header').appendChild(menu1);
+	document.getElementById('menu').appendChild(menu1);
 	$('#menu-options').click(function(){
 		optionsWin = window.open('options.html', 'oWin', 'width=700, height=400,  resizable=no');
 	});
@@ -405,7 +416,7 @@
 	menu2.setAttribute('id', 'menu-reload');
 	menu2.style.backgroundImage = 'url(images/x.png)';
 	menu2.style.top = '26';
-	document.getElementById('header').appendChild(menu2);
+	document.getElementById('menu').appendChild(menu2);
 	$('#menu-reload').click(function(){
 		localStorage.clear();
 		location.reload();
@@ -432,7 +443,7 @@
 		ele.innerHTML = legendhtml;
 		
 		// Update encounter data
-		var ele = document.getElementById('dpsgraph-html');
+		var ele = document.getElementById('graph-html');
 		var graphhtml = "";
 		graphhtml += '<span class="span-absolute" style="left: 2; top: 0;">Total DPS: ' + data.Encounter['dps'] + '</span>';
 		graphhtml += '<span class="span-absolute" style="left: 2; bottom: 0;">Time: ' + data.Encounter['duration'] + '</span>';
@@ -499,7 +510,14 @@
 			);
 			graphCanvas.update();
 			
-			// Remove updates
+			// Hide menu items during combat
+			if (config.hideMenu) {
+				document.getElementById('menu').style.display = 'none';
+				document.getElementById('graph-html').style.width = '100%';
+				document.getElementById('graph-cont').style.width = '100%';
+			}
+			
+			// Remove updates, done once
 			if (updates) {
 				updates = false;
 				$('#updates-html').remove();
@@ -625,7 +643,7 @@
 				// Alive
 				if (players[d].state == "alive") {
 					// Maxhit effect
-					if (players[d].displaymaxhit == true && !config.disableMaxHit && !config.playerFill) {
+					if (players[d].displaymaxhit == true && config.showMaxhits && !config.playerFill) {
 						players[d].displaymaxhit = false;
 						var num = Math.floor(Math.random()*5) + 1;
 						num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
@@ -682,7 +700,7 @@
 					}
 					
 					// Crit effect
-					if (players[d].displaycrit == true) {
+					if (players[d].displaycrit == true && config.critBlip) {
 						players[d].displaycrit = false;
 						let critwave1 = document.createElement("div");
 						critwave1.setAttribute('id', 'crit' + players[d].divID + Date.now());
@@ -707,18 +725,24 @@
 				// Dead
 				if (players[d].state == "dead") {
 					players[d].state = "alive";
-					let playerRGBA = players[d].divRGBA;
-					ele.style.background = 'linear-gradient(90deg, rgba(200, 200, 200, .3) 0%, rgba(0,0,0,0.3) 50%)';
-					ele.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px rgba(200, 200, 200, .3)';
+					if (config.deathColor) {
+						let playerRGBA = players[d].divRGBA;
+						ele.style.background = 'linear-gradient(90deg, rgba(200, 200, 200, .3) 0%, rgba(0,0,0,0.3) 50%)';
+						ele.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px rgba(200, 200, 200, .3)';
+						
+						TweenMax.to(ele, 3, {
+							background: 'linear-gradient(90deg, ' + playerRGBA + ' 0%, rgba(0,0,0,0.3) 50%)',
+							boxShadow: '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px ' + playerRGBA,
+							delay: '2'
+						});
+					}
 					
-					TweenMax.to(ele, 3, {
-						background: 'linear-gradient(90deg, ' + playerRGBA + ' 0%, rgba(0,0,0,0.3) 50%)',
-						boxShadow: '2px 3px 4px rgba(0, 0, 0, .3), inset 0 0 10px ' + playerRGBA,
-						delay: '2'
-					});
-					TweenMax.fromTo(ele, 4, { rotation: 0.5}, {rotation: 0, ease:Elastic.easeOut.config(5, 0.01)});
+					if (config.deathShake) {
+						TweenMax.fromTo(ele, 4, { rotation: 0.5}, {rotation: 0, ease:Elastic.easeOut.config(5, 0.01)});
+					}
 					
-					for (let i = 0; i < 3; i++) {
+					if (config.deathBlood) {
+						for (let i = 0; i < 3; i++) {
 						var num = Math.floor(Math.random() * ele.clientWidth);
 						var numw = Math.floor(Math.random() * (60 - 5 + 1) + 5);
 						var numh = Math.floor(Math.random() * (ele.clientHeight - 5 + 1) + 5);
@@ -753,6 +777,7 @@
 						setTimeout(function(){
 							$(splat, this).remove();
 						}, 5000);
+						}
 					}
 				}
 				
@@ -824,6 +849,13 @@
 				}
 			}
 		} else {
+			// Show menu items during combat
+			if (config.hideMenu) {
+				document.getElementById('menu').style.display = 'block';
+				document.getElementById('graph-html').style.width = 'calc(100% - 26px)';
+				document.getElementById('graph-cont').style.width = 'calc(100% - 26px)';
+			}
+		
 			activeGate = false;
 			players.length = 0;
 			players = [];

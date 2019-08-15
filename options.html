@@ -116,6 +116,8 @@
 				<div class="alert alert-warning" role="alert">
 					Stretching the player bars will disable max hit pop ups
 				</div>
+				<input id="hideMenu" type="checkbox" data-toggle="toggle" data-size="sm">
+				Hide menu icons when in combat
 			</div>
         </div>
 		<div id="layout" style="display:none">
@@ -150,9 +152,23 @@
 		<div id="effects" style="display:none">
             <h3>Effects</h3>
 			<div class="alert alert-secondary" role="alert">
-				<h5 class="alert-heading">Player Effects</h5>
-				<input id="disableMaxHit" type="checkbox" data-toggle="toggle" data-size="sm">
-				Disable max hit pop ups
+				<h5 class="alert-heading">General Effects</h5>
+				<input id="showMaxhits" type="checkbox" data-toggle="toggle" data-size="sm">
+				Show max hit pop ups
+				<br /><br />
+				<input id="critBlip" type="checkbox" data-toggle="toggle" data-size="sm">
+				Show critical hit blips on playerbars
+			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Death Effects</h5>
+				<input id="deathColor" type="checkbox" data-toggle="toggle" data-size="sm">
+				Change player bar color
+				<br /><br />
+				<input id="deathShake" type="checkbox" data-toggle="toggle" data-size="sm">
+				Shake player bar
+				<br /><br />
+				<input id="deathBlood" type="checkbox" data-toggle="toggle" data-size="sm">
+				Show blood splatters
 			</div>
         </div>
 		<div id="save" style="display:none">
@@ -163,16 +179,9 @@
 		var oconfig = JSON.parse(localStorage.getItem('config'));
 		
 		// Read and reflect configuration options
-		if (oconfig.graphFill) {
-			$("#graphFill").prop('checked', true);
-		} else {
-			$("#graphFill").prop('checked', false);
-		}
-		if (oconfig.playerFill) {
-			$("#playerFill").prop('checked', true);
-		} else {
-			$("#playerFill").prop('checked', false);
-		}
+		if (oconfig.graphFill) $("#graphFill").prop('checked', true);
+		if (oconfig.playerFill) $("#playerFill").prop('checked', true);
+		if (oconfig.hideMenu) $("#hideMenu").prop('checked', true);
 		
 		if (oconfig.layoutVertical) {
 			$('#layoutVerticalTop').button('toggle');
@@ -185,11 +194,11 @@
 			$('#layoutHorizontalRight').button('toggle');
 		}
 		
-		if (oconfig.disableMaxHit) {
-			$("#disableMaxHit").prop('checked', true);
-		} else {
-			$("#disableMaxHit").prop('checked', false);
-		}
+		if (oconfig.showMaxhits) $("#showMaxhits").prop('checked', true);
+		if (oconfig.critBlip) $("#critBlip").prop('checked', true);
+		if (oconfig.deathColor) $("#deathColor").prop('checked', true);
+		if (oconfig.deathShake) $("#deathShake").prop('checked', true);
+		if (oconfig.deathBlood) $("#deathBlood").prop('checked', true);
 		
         function show(shown) {
             hideAll();
@@ -211,13 +220,18 @@
 			
 			document.getElementById('save').style.display = 'block';
 			
-			oconfig.graphFill = $("#graphFill").prop('checked');
-			oconfig.playerFill = $("#playerFill").prop('checked');
+			oconfig.graphFill = $('#graphFill').prop('checked');
+			oconfig.playerFill = $('#playerFill').prop('checked');
+			oconfig.hideMenu = $('#hideMenu').prop('checked');
 			
 			oconfig.layoutVertical = $('input[name="layoutVertical"]:checked').val() == 'true';
 			oconfig.layoutHorizontal = $('input[name="layoutHorizontal"]:checked').val() == 'true';
 			
-			oconfig.disableMaxHit = $("#disableMaxHit").prop('checked');
+			oconfig.showMaxhits = $('#showMaxhits').prop('checked');
+			oconfig.critBlip = $('#critBlip').prop('checked');
+			oconfig.deathColor = $('#deathColor').prop('checked');
+			oconfig.deathShake = $('#deathShake').prop('checked');
+			oconfig.deathBlood = $('#deathBlood').prop('checked');
 			
 			var newConfig = new Config();
 			newConfig.update(oconfig);
