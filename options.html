@@ -162,8 +162,6 @@
 	 <script type="text/javascript">
 		var oconfig = JSON.parse(localStorage.getItem('config'));
 		
-		console.log(oconfig);
-		
 		// Read and reflect configuration options
 		if (oconfig.graphFill) {
 			$("#graphFill").prop('checked', true);
@@ -221,12 +219,8 @@
 			
 			oconfig.disableMaxHit = $("#disableMaxHit").prop('checked');
 			
-			console.log(oconfig);
-			
 			var newConfig = new Config();
 			newConfig.update(oconfig);
-			
-			console.log(newConfig);
 			
 			localStorage.setItem('config', JSON.stringify(newConfig));
 			localStorage.setItem('config-saved', true);

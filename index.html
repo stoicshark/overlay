@@ -26,12 +26,6 @@
 			-webkit-user-select: none;
 		}
 		
-		#menu {
-			position: absolute;
-			width: 26px;
-			height: 50px;
-		}
-		
 		.menu-item {
 			position: absolute;
 			width: 24px;
@@ -43,7 +37,8 @@
 		
 		#dpsgraph-html {
 			position: absolute;
-			width: 100%;
+			width: calc(100% - 26px);
+			right: 0;
 			height: 50px;
 			font-family: "aeromatics";
 			font-size: 15px;
@@ -51,8 +46,15 @@
 			text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 		}
 		
-		#dpsgraph {
+		#graph-cont {
 			background-color: rgba(0,0,0,.3);
+			position: absolute;
+			width: calc(100% - 26px);
+			right: 0;
+			height: 50px;
+		}
+		
+		#header {
 			position: absolute;
 			width: 100%;
 			height: 50px;
@@ -227,22 +229,25 @@
 <body>
 	<div id="legend">
 	</div>
-	<div id="dpsgraph">	
-		<canvas id="graph" height="50" width="100%"></canvas>
-	</div>
-	<div id="dpsgraph-html">
-	</div>
-	<div id="menu">
+	<div id="header">
+		<div id="graph-cont">	
+			<canvas id="graph" height="50" width="100%"></canvas>
+		</div>
+		<div id="dpsgraph-html">
+		</div>
 	</div>
 	<div id="main">
 	</div>
 	<div id="updates-html">
+		<span style="font-family: voltage; font-size: 20px;">rev.8</span><br />
+		- Several severe resizing bugs fixed<br />
+		- Correction in update notes, saves are done through localstorage not cookies<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.7 (The scroll down for more, update)</span><br />
 		- Disable clickthru temporarily to scroll and click things<br />
 		- Scrollable updates<br />
 		- UI recalculated on startup, you may need to resize<br />
 		- Config/options framework, disable clickthrough on overlay plugin to use<br />
-		- Config/options are saved with cookies, I'll try my best to not have them reset with every update but no promises<br />
+		- Config/options are saved with localstorage, I'll try my best to not have them reset with every update but no promises<br />
 		- Default layout changed (top and left), enter options for the old layout (bottom and right)<br />
 		- Config button added to UI<br />
 		- Reload/Reboot button added to UI(Click X to hard reset the UI, this is temporary)<br />
@@ -345,11 +350,10 @@
 	
 	// Should containers fill the main window?
 	if (config.graphFill) {
-		document.getElementById('dpsgraph').style.width = 'calc(100% - 27px)';
-		document.getElementById('dpsgraph-html').style.width = 'calc(100% - 27px)';
+		document.getElementById('header').style.width = '100%';
+		//document.getElementById('graph-cont').style.width = '100%';
 	} else {
-		document.getElementById('dpsgraph').style.width = 'calc(100% - 126px)';
-		document.getElementById('dpsgraph-html').style.width = 'calc(100% - 126px)';
+		document.getElementById('header').style.width = 'calc(100% - 100px)';
 	}
 	if (config.playerFill) {
 		document.getElementById('legend').style.width = '100%';
@@ -361,34 +365,26 @@
 	
 	// Vertical and horizontal layout setup
 	if (config.layoutVertical) {
-		document.getElementById('dpsgraph').style.top = '0';
-		document.getElementById('dpsgraph-html').style.top = '0';
+		document.getElementById('header').style.top = '0';
 		document.getElementById('legend').style.top = '53';
 		document.getElementById('main').style.top = '68';
-		document.getElementById('menu').style.top = '0';
 		document.getElementById('updates-html').style.top = '71';
 	} else {
-		document.getElementById('dpsgraph').style.bottom = '0';
-		document.getElementById('dpsgraph-html').style.bottom = '0';
+		document.getElementById('header').style.bottom = '0';
 		document.getElementById('legend').style.bottom = '53';
 		document.getElementById('main').style.bottom = '68';
-		document.getElementById('menu').style.bottom = '0';
 		document.getElementById('updates-html').style.bottom = '71';
 	}
 	
 	if (config.layoutHorizontal) {
-		document.getElementById('dpsgraph').style.left = '26';
-		document.getElementById('dpsgraph-html').style.left = '26';
+		document.getElementById('header').style.left = '0';
 		document.getElementById('legend').style.left = '0';
 		document.getElementById('main').style.left = '0';
-		document.getElementById('menu').style.left = '0';
 		document.getElementById('updates-html').style.left = '0';
 	} else {
-		document.getElementById('dpsgraph').style.right = '0';
-		document.getElementById('dpsgraph-html').style.right = '0';
+		document.getElementById('header').style.right = '0';
 		document.getElementById('legend').style.right = '0';
 		document.getElementById('main').style.right = '0';
-		document.getElementById('menu').style.right = $('#dpsgraph-html').width();
 		document.getElementById('updates-html').style.right = '0';
 	}
 	
@@ -399,7 +395,7 @@
 	menu1.setAttribute('id', 'menu-options');
 	menu1.style.backgroundImage = 'url(images/options.png)';
 	menu1.style.top = '0';
-	document.getElementById('menu').appendChild(menu1);
+	document.getElementById('header').appendChild(menu1);
 	$('#menu-options').click(function(){
 		optionsWin = window.open('options.html', 'oWin', 'width=700, height=400,  resizable=no');
 	});
@@ -409,7 +405,7 @@
 	menu2.setAttribute('id', 'menu-reload');
 	menu2.style.backgroundImage = 'url(images/x.png)';
 	menu2.style.top = '26';
-	document.getElementById('menu').appendChild(menu2);
+	document.getElementById('header').appendChild(menu2);
 	$('#menu-reload').click(function(){
 		localStorage.clear();
 		location.reload();
@@ -456,7 +452,7 @@
 			graphCanvas.clear();
 			graphCanvas.destroy();
 			$('#graph').remove();
-			$('#dpsgraph').append('<canvas id="graph" height="50" width="100%"><canvas>');
+			$('#graph-cont').append('<canvas id="graph" height="50" width="100%"><canvas>');
 			ctx = document.getElementById('graph').getContext('2d');
 			graphCanvas = new Chart(ctx, 
 				{
