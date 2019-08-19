@@ -2,6 +2,9 @@
 <head>
 	<title>Parser</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
 	<meta name="robots" content="noindex, nofollow"/>
 	<meta name="googlebot" content="noindex, nofollow"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -225,6 +228,7 @@
 	<script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
 	<script src="lib/chart.bundle.min.js" type="text/javascript"></script>
 	<script src="lib/TweenMax.min.js" type="text/javascript"></script>
+	<script src="lib/actwebsocket.js" type="text/javascript"></script>
 	<script src="lib/config.js" type="text/javascript"></script>
 	<script src="lib/parse.js" type="text/javascript"></script>
 	<script src="lib/player.js" type="text/javascript"></script>
@@ -245,6 +249,10 @@
 	<div id="main">
 	</div>
 	<div id="updates-html">
+		<span style="font-family: voltage; font-size: 20px;">rev.11</span><br />
+		- ACTWebSocket support(?)<br />
+		- Catch-all if settings fail to load<br />
+		- Save & Exit is now Save, Data Resets no longer close the window (cross plugin issues/compatibility)<br />
 		<span style="font-family: voltage; font-size: 20px;">rev.10 (The <span style="color: red">c</span><span style="color: dodgerblue">o</span><span style="color: limegreen">l</span><span style="color: yellow">o</span><span style="color: darkorchid">r</span> update)</span><br />
 		- Less confusing jargon, options is now settings<br />
 		- New menu icon<br />
@@ -302,13 +310,18 @@
 	'use strict';
 	// Config things
 	var config = new Config();
-	// Is there a saved config?
-	if (localStorage.getItem('config') === null) {
+	try {
+		// Is there a saved config?
+		if (localStorage.getItem('config') === null) {
+			localStorage.setItem('config', JSON.stringify(config)); // There you go
+		} else {
+			var parseConfig = JSON.parse(localStorage.getItem('config'));
+			config.update(parseConfig); // Populate the current config with saved values
+			localStorage.setItem('config', JSON.stringify(config)); // Save everything in case there's something new
+		}
+	} catch (e) {
+		// Something is probably broken. Reset settings.
 		localStorage.setItem('config', JSON.stringify(config)); // There you go
-	} else {
-		var parseConfig = JSON.parse(localStorage.getItem('config'));
-		config.update(parseConfig); // Populate the current config with saved values
-		localStorage.setItem('config', JSON.stringify(config)); // Save everything in case there's something new
 	}
 	
 	// Check if configuration is saved
@@ -319,11 +332,10 @@
 		}
 	}, 500);
 	
-	var updates = true;
-	var players = [];
-	var activeGate = false;
-	var topDamage = 0;
-	
+	let updates = true;
+	let players = [];
+	let activeGate = false;
+	let topDamage = 0;
 
 	var ctx = document.getElementById('graph').getContext('2d');
 	var graphCanvas = new Chart(ctx, 
@@ -433,8 +445,10 @@
 	});
 	
 	// UPDATE
+	var debug = '';
 	function update(rawdata) {
 		var data = new Data(rawdata);
+		debug = data;
 		
 		// Display Legend
 		var ele = document.getElementById('legend');
@@ -534,7 +548,7 @@
 		}
 		
 		//if (true) {
-		if (data.isActive == "true") {
+		if (data.isActive) {
 			// Check for new players
 			for (let e in data.Combatant) {
 				let entry = data.Combatant[e];

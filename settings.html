@@ -113,7 +113,7 @@
 		<li class="item"><a href="#" onclick="return show('effects');">Effects</a></li>
 		<li class="item"><a href="#" onclick="return show('savedata');">Save Data</a></li>
 		<div style="position: absolute; bottom: 10px; text-align: center; width: 100%;">
-			<a class="btn btn-info" href="#" role="button" onclick="save();"><strong>Save & Exit</strong></a>
+			<a class="btn btn-info" href="#" role="button" onclick="save();"><strong>Save</strong></a>
 		</div>
     </ul>
     <div id="top"></div>
@@ -246,7 +246,7 @@
 		<div id="savedata" style="display:none">
 			<h3>Save Data</h3>
 			<div class="alert alert-danger" style="text-align: center" role="alert">
-				Resets all settings and save data to their defaults.<br />
+				Resets all settings and save data to their defaults.<br /><br />
 				<div class="input-group inline-table">
 					<div class="input-group-append">
 						<div class="input-group-text">
@@ -257,19 +257,24 @@
 				</div>
 			</div>
 		</div>
+		<div id="save-display" style="display:none">
+			<h3>Save Data</h3>
+			<div class="alert alert-success" style="text-align: center" role="alert">
+				Settings saved.
+			</div>
+		</div>
+		<div id="reset-display" style="display:none">
+			<h3>Save Data</h3>
+			<div class="alert alert-success" style="text-align: center" role="alert">
+				Settings reset.
+			</div>
+		</div>
     </div>
 	 <script type="text/javascript">
-		var oconfig = JSON.parse(localStorage.getItem('config'));
-		
-		// Read and reflect configuration settings
-		
-		// General
-		if (oconfig.graphFill) $("#graphFill").prop('checked', true);
-		if (oconfig.playerFill) $("#playerFill").prop('checked', true);
-		if (oconfig.hideMenu) $("#hideMenu").prop('checked', true);
-		
+		let oconfig = JSON.parse(localStorage.getItem('config'));
+
 		// Colors
-		var colorID = [
+		let colorID = [
 			// Player colors
 			['dpsRGBA', true, 'playerAlpha'],
 			['tankRGBA', true, 'playerAlpha'],
@@ -296,70 +301,112 @@
 			['graphTextColor', false, '']
 		];
 		
-		for (var cid in colorID) {
-			$('#' + colorID[cid][0] + '').spectrum({
-				color:  rgbaConvert(oconfig[colorID[cid][0]], false),
-				showButtons: false,
-				preferredFormat: "hex",
-				showInput: true,
-				showInitial: true
-				/*change: function(color) {
-					// Todo
-				}*/
+		loadConfig();
+		function loadConfig() {			
+			// Read and reflect configuration settings
+			
+			// General
+			if (oconfig.graphFill) {
+				$("#graphFill").prop('checked', true) 
+			} else {
+				$("#graphFill").prop('checked', false);
+			}
+			if (oconfig.playerFill) {
+				$("#playerFill").prop('checked', true) 
+			} else {
+				$("#playerFill").prop('checked', false);
+			}
+			if (oconfig.hideMenu) {
+				$("#hideMenu").prop('checked', true) 
+			} else {
+				$("#hideMenu").prop('checked', false);
+			}
+			
+			for (var cid in colorID) {
+				$('#' + colorID[cid][0] + '').spectrum({
+					color:  rgbaConvert(oconfig[colorID[cid][0]], false),
+					showButtons: false,
+					preferredFormat: "hex",
+					showInput: true,
+					showInitial: true
+					/*change: function(color) {
+						// Todo
+					}*/
+				});
+			}
+			
+			$("#playerAlpha").bootstrapSlider({ // playerAlpha
+				value: oconfig.playerAlpha,
+				step: 0.1,
+				min: 0,
+				max: 1
 			});
+			$("#playerAlphaValue").text((oconfig.playerAlpha * 100) + '%');
+			$("#playerAlpha").on("slide", function(e) {
+				$("#playerAlphaValue").text((e.value * 100) + '%');
+			});
+			
+			$("#infoAlpha").bootstrapSlider({ // infoAlpha
+				value: oconfig.infoAlpha,
+				step: 0.1,
+				min: 0,
+				max: 1
+			});
+			$("#infoAlphaValue").text((oconfig.infoAlpha * 100) + '%');
+			$("#infoAlpha").on("slide", function(e) {
+				$("#infoAlphaValue").text((e.value * 100) + '%');
+			});
+			
+			$("#graphAlpha").bootstrapSlider({ // graphAlpha
+				value: oconfig.graphAlpha,
+				step: 0.1,
+				min: 0,
+				max: 1
+			});
+			$("#graphAlphaValue").text((oconfig.graphAlpha * 100) + '%');
+			$("#graphAlpha").on("slide", function(e) {
+				$("#graphAlphaValue").text((e.value * 100) + '%');
+			});
+			
+			// Layout
+			if (oconfig.layoutVertical) {
+				$('#layoutVerticalTop').button('toggle');
+			} else {
+				$('#layoutVerticalBottom').button('toggle');
+			}
+			if (oconfig.layoutHorizontal) {
+				$('#layoutHorizontalLeft').button('toggle');
+			} else {
+				$('#layoutHorizontalRight').button('toggle');
+			}
+			
+			// Effects
+			if (oconfig.showMaxhits) {
+				$("#showMaxhits").prop('checked', true) 
+			} else {
+				$("#showMaxhits").prop('checked', false);
+			}
+			if (oconfig.critBlip) { 
+				$("#critBlip").prop('checked', true) 
+			} else {
+				$("#critBlip").prop('checked', false);
+			}
+			if (oconfig.deathColor) { 
+				$("#deathColor").prop('checked', true) 
+			} else {
+				$("#deathColor").prop('checked', false);
+			}
+			if (oconfig.deathShake) { 
+				$("#deathShake").prop('checked', true) 
+			} else {
+				$("#deathShake").prop('checked', false);
+			}
+			if (oconfig.deathBlood) { 
+				$("#deathBlood").prop('checked', true) 
+			} else {
+				$("#deathBlood").prop('checked', false);
+			}
 		}
-		
-		$("#playerAlpha").bootstrapSlider({ // playerAlpha
-			value: oconfig.playerAlpha,
-			step: 0.1,
-			min: 0,
-			max: 1
-		});
-		$("#playerAlphaValue").text((oconfig.playerAlpha * 100) + '%');
-		$("#playerAlpha").on("slide", function(e) {
-			$("#playerAlphaValue").text((e.value * 100) + '%');
-		});
-		
-		$("#infoAlpha").bootstrapSlider({ // infoAlpha
-			value: oconfig.infoAlpha,
-			step: 0.1,
-			min: 0,
-			max: 1
-		});
-		$("#infoAlphaValue").text((oconfig.infoAlpha * 100) + '%');
-		$("#infoAlpha").on("slide", function(e) {
-			$("#infoAlphaValue").text((e.value * 100) + '%');
-		});
-		
-		$("#graphAlpha").bootstrapSlider({ // graphAlpha
-			value: oconfig.graphAlpha,
-			step: 0.1,
-			min: 0,
-			max: 1
-		});
-		$("#graphAlphaValue").text((oconfig.graphAlpha * 100) + '%');
-		$("#graphAlpha").on("slide", function(e) {
-			$("#graphAlphaValue").text((e.value * 100) + '%');
-		});
-		
-		// Layout
-		if (oconfig.layoutVertical) {
-			$('#layoutVerticalTop').button('toggle');
-		} else {
-			$('#layoutVerticalBottom').button('toggle');
-		}
-		if (oconfig.layoutHorizontal) {
-			$('#layoutHorizontalLeft').button('toggle');
-		} else {
-			$('#layoutHorizontalRight').button('toggle');
-		}
-		
-		// Effects
-		if (oconfig.showMaxhits) $("#showMaxhits").prop('checked', true);
-		if (oconfig.critBlip) $("#critBlip").prop('checked', true);
-		if (oconfig.deathColor) $("#deathColor").prop('checked', true);
-		if (oconfig.deathShake) $("#deathShake").prop('checked', true);
-		if (oconfig.deathBlood) $("#deathBlood").prop('checked', true);
 		
         function show(shown) {
             hideAll();
@@ -374,6 +421,8 @@
             document.getElementById('layout').style.display = 'none';
             document.getElementById('effects').style.display = 'none';
             document.getElementById('savedata').style.display = 'none';
+			document.getElementById('save-display').style.display = 'none';
+			document.getElementById('reset-display').style.display = 'none';
             return false;
         }
 		
@@ -413,17 +462,19 @@
 			
 			localStorage.setItem('config', JSON.stringify(newConfig));
 			localStorage.setItem('config-saved', true);
-			window.close();
+			document.getElementById("save-display").style.display = 'block';
 			return false;
 		}
 		
 		function reset() {
 			if (document.getElementById('reset').checked) {
 				hideAll();
-				var newConfig = new Config();			
+				var newConfig = new Config();
 				localStorage.setItem('config', JSON.stringify(newConfig));
 				localStorage.setItem('config-saved', true);
-				window.close();
+				document.getElementById("reset-display").style.display = 'block';
+				document.getElementById('reset').checked = false;
+				location.reload();
 			}
 			return false;
 		}
