@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+	<META HTTP-EQUIV="Access-Control-Allow-Origin">
+    <title>Settings</title>
+	<link rel="stylesheet" href="resources/bootstrap.css" />
+	<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/css/bootstrap4-toggle.min.css" rel="stylesheet" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.css" rel="stylesheet" />
+	<link rel="stylesheet" href="resources/spectrum.css" />
+	<script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
+	<script src="lib/bootstrap.min.js" type="text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/js/bootstrap4-toggle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/bootstrap-slider.min.js"></script>
+	<script src="lib/spectrum.js" type="text/javascript"></script>
+	<script src="lib/config.js" type="text/javascript"></script>
+	<script src="lib/parse.js" type="text/javascript"></script>
+	<script src="lib/player.js" type="text/javascript"></script>
+	<style type="text/css">
+        body {
+            margin: 0;
+        }
+		
+		#test {
+			width: 100%
+			background-color: #000;
+		}
+
+        ul {
+            list-style-type: none;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            width: 120px;
+            left: 0;
+            background-color: #f1f1f1;
+            position: fixed;
+            height: 100%;
+            overflow: hidden;
+			text-align: center;
+        }
+
+        li a {
+            display: block;
+            color: #000;
+            padding: 3px 5px 3px 5px;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        li a.active {
+            background-color: #679cbf;
+            color: #fff;
+            cursor: default;
+			text-decoration: none;
+			text-align: center;
+        }
+
+        .item a:hover {
+            background-color: #888;
+            color: #fff;
+			text-decoration: none;
+        }
+		
+        #top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        #content {
+            position: absolute;
+            left: 120px;
+            padding: 5px 5px;
+            height: 100%;
+            width: calc(100% - 120px);
+            font-family: Arial, Helvetica, sans-serif;
+			font-size: 14px;
+        }
+		
+		#content-half {
+            position: absolute;
+			top: 39px;
+            left: calc(50% - 10px);
+            padding: 5px 5px;
+            height: 100%;
+            width: 50%;
+            font-family: Arial, Helvetica, sans-serif;
+			font-size: 14px;
+        }
+		
+		.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show > .btn-secondary.dropdown-toggle {
+			color: #fff;
+			background-color: #007bff;
+			border-color: #0059b9;
+		}
+		
+		.inline-table {
+			display: inline-table;
+			text-align: center;
+			width: 0;
+		}
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a class="active" href="#home"><strong>Settings</strong></a></li>
+        <li class="item"><a href="#" onclick="return show('general');">General</a></li>
+		<li class="item"><a href="#" onclick="return show('colors');">Colors</a></li>
+        <li class="item"><a href="#" onclick="return show('layout');">Layout</a></li>
+		<li class="item"><a href="#" onclick="return show('effects');">Effects</a></li>
+		<li class="item"><a href="#" onclick="return show('savedata');">Save Data</a></li>
+		<div style="position: absolute; bottom: 10px; text-align: center; width: 100%;">
+			<a class="btn btn-info" href="#" role="button" onclick="save();"><strong>Save & Exit</strong></a>
+		</div>
+    </ul>
+    <div id="top"></div>
+    <div id="content">
+		<div class="alert dismissable alert-danger fade show" role="alert">
+			The settings page is currently in development and is liable to change often.
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+        <div id="general">
+            <h3>General</h3>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Appearance</h5>
+				<input id="graphFill" type="checkbox" data-toggle="toggle" data-size="sm">
+				Stretch graph and information bar to fill the window
+				<br /><br />
+				<input id="playerFill" type="checkbox" data-toggle="toggle" data-size="sm">
+				Stretch player bars to fill the window
+				<br /><br />
+				<div class="alert alert-warning" role="alert">
+					Stretching the player bars will disable max hit pop ups
+				</div>
+				<input id="hideMenu" type="checkbox" data-toggle="toggle" data-size="sm">
+				Hide menu icons when in combat
+			</div>
+        </div>
+		<div id="colors" style="display:none">
+            <h3>Colors</h3>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Player Colors</h5>
+				<input type='text' id="dpsRGBA" /> <input type='text' id="dpsRGBA_" /> DPS bar colors<br /><br />
+				<input type='text' id="tankRGBA" /> <input type='text' id="tankRGBA_" /> Tank bar colors<br /><br />
+				<input type='text' id="healerRGBA" /> <input type='text' id="healerRGBA_" /> Healer bar colors<br /><br />
+				<input type='text' id="limitRGBA" /> <input type='text' id="limitRGBA_" /> Limitbreak bar colors<br /><br />
+				<input type='text' id="defaultRGBA" /> <input type='text' id="defaultRGBA_" /> Default bar colors<br /><br />
+				<div id="content-half">
+					<input type='text' id="dpsRGBA__" /> DPS accent color<br /><br />
+					<input type='text' id="tankRGBA__" /> Tank accent color<br /><br />
+					<input type='text' id="healerRGBA__" /> Healer accent color<br /><br />
+					<input type='text' id="limitRGBA__" /> Limitbreak accent color<br /><br />
+					<input type='text' id="defaultRGBA__" /> Default accent color<br /><br />
+				</div>
+				<div style="text-align: center">
+					Player bar opacity: <span id="playerAlphaValue"></span><br />
+					<input id="playerAlpha" type="text" />
+				</div>
+				<hr>
+				<input type='text' id="playerTextColor" /> Player text color
+				<div id="content-half" style="top: 370px">
+					<input type='text' id="playerDPSColor" /> DPS text color
+				</div>
+			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Information Colors</h5>
+				<input type='text' id="infoColor" /> Information container color<br /><br />
+				<div id="content-half">
+					<input type='text' id="infoTextColor" /> Information text color<br /><br />
+				</div>
+				<div style="text-align: center">
+					Information container opacity: <span id="infoAlphaValue"></span><br />
+					<input id="infoAlpha" type="text" />
+				</div>
+			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Graph Colors</h5>
+				<input type='text' id="graphColor" /> Graph container color<br /><br />
+				<input type='text' id="graphTextColor" /> Graph text color<br /><br />
+				<div id="content-half">
+					<input type='text' id="graphLineColor" /> Graph line color<br /><br />
+					<input type='text' id="graphFillColor" /> Graph fill color<br /><br />
+				</div>
+				<div style="text-align: center">
+					Graph container opacity: <span id="graphAlphaValue"></span><br />
+					<input id="graphAlpha" type="text" />
+				</div>
+			</div>
+        </div>
+		<div id="layout" style="display:none">
+            <h3>Layout</h3>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Vertical Orientation</h5>
+				<div style="text-align: center">
+					<div class="btn-group btn-group-toggle btn-group-lg" data-toggle="buttons">
+						<label  id="layoutVerticalTop" class="btn btn-secondary">
+							<input type="radio" name="layoutVertical" value="true">Top
+						</label>
+						<label  id="layoutVerticalBottom" class="btn btn-secondary">
+							<input type="radio" name="layoutVertical" value="false">Bottom
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Horizontal Orientation</h5>
+				<div style="text-align: center">
+					<div class="btn-group btn-group-toggle btn-group-lg" data-toggle="buttons">
+						<label  id="layoutHorizontalLeft" class="btn btn-secondary">
+							<input type="radio" name="layoutHorizontal" value="true">Left
+						</label>
+						<label  id="layoutHorizontalRight" class="btn btn-secondary">
+							<input type="radio" name="layoutHorizontal" value="false">Right
+						</label>
+					</div>
+				</div>
+			</div>
+        </div>
+		<div id="effects" style="display:none">
+            <h3>Effects</h3>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">General Effects</h5>
+				<input id="showMaxhits" type="checkbox" data-toggle="toggle" data-size="sm">
+				Show max hit pop ups
+				<br /><br />
+				<input id="critBlip" type="checkbox" data-toggle="toggle" data-size="sm">
+				Show critical hit blips on playerbars
+			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Death Effects</h5>
+				<input id="deathColor" type="checkbox" data-toggle="toggle" data-size="sm">
+				Change player bar color
+				<br /><br />
+				<input id="deathShake" type="checkbox" data-toggle="toggle" data-size="sm">
+				Shake player bar
+				<br /><br />
+				<input id="deathBlood" type="checkbox" data-toggle="toggle" data-size="sm">
+				Show blood splatters
+			</div>
+        </div>
+		<div id="savedata" style="display:none">
+			<h3>Save Data</h3>
+			<div class="alert alert-danger" style="text-align: center" role="alert">
+				Resets all settings and save data to their defaults.<br />
+				<div class="input-group inline-table">
+					<div class="input-group-append">
+						<div class="input-group-text">
+							<input id="reset" type="checkbox" />
+						</div>
+						<a class="btn btn-danger" href="#" role="button" onclick="reset();"><strong>Reset</strong></a>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+	 <script type="text/javascript">
+		var oconfig = JSON.parse(localStorage.getItem('config'));
+		
+		// Read and reflect configuration settings
+		
+		// General
+		if (oconfig.graphFill) $("#graphFill").prop('checked', true);
+		if (oconfig.playerFill) $("#playerFill").prop('checked', true);
+		if (oconfig.hideMenu) $("#hideMenu").prop('checked', true);
+		
+		// Colors
+		var colorID = [
+			// Player colors
+			['dpsRGBA', true, 'playerAlpha'],
+			['tankRGBA', true, 'playerAlpha'],
+			['healerRGBA', true, 'playerAlpha'],
+			['limitRGBA', true, 'playerAlpha'],
+			['defaultRGBA', true, 'playerAlpha'],
+			['dpsRGBA_', true, 'playerAlpha'],
+			['tankRGBA_', true, 'playerAlpha'],
+			['healerRGBA_', true, 'playerAlpha'],
+			['limitRGBA_', true, 'playerAlpha'],
+			['defaultRGBA_', true, 'playerAlpha'],
+			['dpsRGBA__', true, 'playerAlpha'],
+			['tankRGBA__', true, 'playerAlpha'],
+			['healerRGBA__', true, 'playerAlpha'],
+			['limitRGBA__', true, 'playerAlpha'],
+			['defaultRGBA__', true, 'playerAlpha'],
+			['playerTextColor', false, ''],
+			['playerDPSColor', false, ''],
+			['infoColor', true, 'infoAlpha'],
+			['infoTextColor', false, ''],
+			['graphColor', true , 'graphAlpha'],
+			['graphLineColor', true, 'graphAlpha'],
+			['graphFillColor', true, 'graphAlpha'],
+			['graphTextColor', false, '']
+		];
+		
+		for (var cid in colorID) {
+			$('#' + colorID[cid][0] + '').spectrum({
+				color:  rgbaConvert(oconfig[colorID[cid][0]], false),
+				showButtons: false,
+				preferredFormat: "hex",
+				showInput: true,
+				showInitial: true
+				/*change: function(color) {
+					// Todo
+				}*/
+			});
+		}
+		
+		$("#playerAlpha").bootstrapSlider({ // playerAlpha
+			value: oconfig.playerAlpha,
+			step: 0.1,
+			min: 0,
+			max: 1
+		});
+		$("#playerAlphaValue").text((oconfig.playerAlpha * 100) + '%');
+		$("#playerAlpha").on("slide", function(e) {
+			$("#playerAlphaValue").text((e.value * 100) + '%');
+		});
+		
+		$("#infoAlpha").bootstrapSlider({ // infoAlpha
+			value: oconfig.infoAlpha,
+			step: 0.1,
+			min: 0,
+			max: 1
+		});
+		$("#infoAlphaValue").text((oconfig.infoAlpha * 100) + '%');
+		$("#infoAlpha").on("slide", function(e) {
+			$("#infoAlphaValue").text((e.value * 100) + '%');
+		});
+		
+		$("#graphAlpha").bootstrapSlider({ // graphAlpha
+			value: oconfig.graphAlpha,
+			step: 0.1,
+			min: 0,
+			max: 1
+		});
+		$("#graphAlphaValue").text((oconfig.graphAlpha * 100) + '%');
+		$("#graphAlpha").on("slide", function(e) {
+			$("#graphAlphaValue").text((e.value * 100) + '%');
+		});
+		
+		// Layout
+		if (oconfig.layoutVertical) {
+			$('#layoutVerticalTop').button('toggle');
+		} else {
+			$('#layoutVerticalBottom').button('toggle');
+		}
+		if (oconfig.layoutHorizontal) {
+			$('#layoutHorizontalLeft').button('toggle');
+		} else {
+			$('#layoutHorizontalRight').button('toggle');
+		}
+		
+		// Effects
+		if (oconfig.showMaxhits) $("#showMaxhits").prop('checked', true);
+		if (oconfig.critBlip) $("#critBlip").prop('checked', true);
+		if (oconfig.deathColor) $("#deathColor").prop('checked', true);
+		if (oconfig.deathShake) $("#deathShake").prop('checked', true);
+		if (oconfig.deathBlood) $("#deathBlood").prop('checked', true);
+		
+        function show(shown) {
+            hideAll();
+            document.getElementById(shown).style.display = 'block';			
+            window.scrollTo(0, 0);
+            return false;
+        }
+		
+        function hideAll() {
+            document.getElementById('general').style.display = 'none';
+			document.getElementById('colors').style.display = 'none';
+            document.getElementById('layout').style.display = 'none';
+            document.getElementById('effects').style.display = 'none';
+            document.getElementById('savedata').style.display = 'none';
+            return false;
+        }
+		
+		function save() {
+			hideAll();
+			
+			// General
+			oconfig.graphFill = $('#graphFill').prop('checked');
+			oconfig.playerFill = $('#playerFill').prop('checked');
+			oconfig.hideMenu = $('#hideMenu').prop('checked');
+			
+			// Colors
+			oconfig.playerAlpha = $('#playerAlpha').bootstrapSlider('getValue');
+			oconfig.infoAlpha = $('#infoAlpha').bootstrapSlider('getValue');
+			oconfig.graphAlpha = $('#graphAlpha').bootstrapSlider('getValue');
+			for (var cid in colorID) {
+				if (colorID[cid][1]) {
+					oconfig[colorID[cid][0]] = rgbaConvert($('#' + colorID[cid][0] + '').spectrum("get").toRgbString(), oconfig[colorID[cid][2]]);
+				} else {
+					oconfig[colorID[cid][0]] = $('#' + colorID[cid][0] + '').spectrum("get").toRgbString();
+				}
+			}
+			
+			// Layout
+			oconfig.layoutVertical = $('input[name="layoutVertical"]:checked').val() == 'true';
+			oconfig.layoutHorizontal = $('input[name="layoutHorizontal"]:checked').val() == 'true';
+			
+			// Effects
+			oconfig.showMaxhits = $('#showMaxhits').prop('checked');
+			oconfig.critBlip = $('#critBlip').prop('checked');
+			oconfig.deathColor = $('#deathColor').prop('checked');
+			oconfig.deathShake = $('#deathShake').prop('checked');
+			oconfig.deathBlood = $('#deathBlood').prop('checked');
+			
+			var newConfig = new Config();
+			newConfig.update(oconfig);
+			
+			localStorage.setItem('config', JSON.stringify(newConfig));
+			localStorage.setItem('config-saved', true);
+			window.close();
+			return false;
+		}
+		
+		function reset() {
+			if (document.getElementById('reset').checked) {
+				hideAll();
+				var newConfig = new Config();			
+				localStorage.setItem('config', JSON.stringify(newConfig));
+				localStorage.setItem('config-saved', true);
+				window.close();
+			}
+			return false;
+		}
+		
+		function rgbaConvert (color, alpha) {
+			var c = color.match(/\d+/g);
+			if (alpha) {
+				return 'rgba(' + c[0] + ', ' + c[1] + ', ' + c[2] + ', ' + alpha + ')';
+			}
+			return 'rgb(' + c[0] + ', ' + c[1] + ', ' + c[2] + ')';
+		}
+    </script>
+</body>
+</html>
