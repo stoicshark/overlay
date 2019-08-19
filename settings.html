@@ -301,113 +301,78 @@
 			['graphTextColor', false, '']
 		];
 		
-		loadConfig();
-		function loadConfig() {			
-			// Read and reflect configuration settings
-			
-			// General
-			if (oconfig.graphFill) {
-				$("#graphFill").prop('checked', true) 
-			} else {
-				$("#graphFill").prop('checked', false);
-			}
-			if (oconfig.playerFill) {
-				$("#playerFill").prop('checked', true) 
-			} else {
-				$("#playerFill").prop('checked', false);
-			}
-			if (oconfig.hideMenu) {
-				$("#hideMenu").prop('checked', true) 
-			} else {
-				$("#hideMenu").prop('checked', false);
-			}
-			
-			for (var cid in colorID) {
-				$('#' + colorID[cid][0] + '').spectrum({
-					color:  rgbaConvert(oconfig[colorID[cid][0]], false),
-					showButtons: false,
-					preferredFormat: "hex",
-					showInput: true,
-					showInitial: true
-					/*change: function(color) {
-						// Todo
-					}*/
-				});
-			}
-			
-			$("#playerAlpha").bootstrapSlider({ // playerAlpha
-				value: oconfig.playerAlpha,
-				step: 0.1,
-				min: 0,
-				max: 1
+		// Read and reflect configuration settings
+		
+		// General
+		if (oconfig.graphFill) $("#graphFill").prop('checked', true);
+		if (oconfig.playerFill) $("#playerFill").prop('checked', true);
+		if (oconfig.hideMenu) $("#hideMenu").prop('checked', true);
+		
+		for (var cid in colorID) {
+			$('#' + colorID[cid][0] + '').spectrum({
+				color:  rgbaConvert(oconfig[colorID[cid][0]], false),
+				showButtons: false,
+				preferredFormat: "hex",
+				showInput: true,
+				showInitial: true
+				/*change: function(color) {
+					// Todo
+				}*/
 			});
-			$("#playerAlphaValue").text((oconfig.playerAlpha * 100) + '%');
-			$("#playerAlpha").on("slide", function(e) {
-				$("#playerAlphaValue").text((e.value * 100) + '%');
-			});
-			
-			$("#infoAlpha").bootstrapSlider({ // infoAlpha
-				value: oconfig.infoAlpha,
-				step: 0.1,
-				min: 0,
-				max: 1
-			});
-			$("#infoAlphaValue").text((oconfig.infoAlpha * 100) + '%');
-			$("#infoAlpha").on("slide", function(e) {
-				$("#infoAlphaValue").text((e.value * 100) + '%');
-			});
-			
-			$("#graphAlpha").bootstrapSlider({ // graphAlpha
-				value: oconfig.graphAlpha,
-				step: 0.1,
-				min: 0,
-				max: 1
-			});
-			$("#graphAlphaValue").text((oconfig.graphAlpha * 100) + '%');
-			$("#graphAlpha").on("slide", function(e) {
-				$("#graphAlphaValue").text((e.value * 100) + '%');
-			});
-			
-			// Layout
-			if (oconfig.layoutVertical) {
-				$('#layoutVerticalTop').button('toggle');
-			} else {
-				$('#layoutVerticalBottom').button('toggle');
-			}
-			if (oconfig.layoutHorizontal) {
-				$('#layoutHorizontalLeft').button('toggle');
-			} else {
-				$('#layoutHorizontalRight').button('toggle');
-			}
-			
-			// Effects
-			if (oconfig.showMaxhits) {
-				$("#showMaxhits").prop('checked', true) 
-			} else {
-				$("#showMaxhits").prop('checked', false);
-			}
-			if (oconfig.critBlip) { 
-				$("#critBlip").prop('checked', true) 
-			} else {
-				$("#critBlip").prop('checked', false);
-			}
-			if (oconfig.deathColor) { 
-				$("#deathColor").prop('checked', true) 
-			} else {
-				$("#deathColor").prop('checked', false);
-			}
-			if (oconfig.deathShake) { 
-				$("#deathShake").prop('checked', true) 
-			} else {
-				$("#deathShake").prop('checked', false);
-			}
-			if (oconfig.deathBlood) { 
-				$("#deathBlood").prop('checked', true) 
-			} else {
-				$("#deathBlood").prop('checked', false);
-			}
 		}
 		
+		$("#playerAlpha").bootstrapSlider({ // playerAlpha
+			value: oconfig.playerAlpha,
+			step: 0.1,
+			min: 0,
+			max: 1
+		});
+		$("#playerAlphaValue").text((oconfig.playerAlpha * 100) + '%');
+		$("#playerAlpha").on("slide", function(e) {
+			$("#playerAlphaValue").text((e.value * 100) + '%');
+		});
+		
+		$("#infoAlpha").bootstrapSlider({ // infoAlpha
+			value: oconfig.infoAlpha,
+			step: 0.1,
+			min: 0,
+			max: 1
+		});
+		$("#infoAlphaValue").text((oconfig.infoAlpha * 100) + '%');
+		$("#infoAlpha").on("slide", function(e) {
+			$("#infoAlphaValue").text((e.value * 100) + '%');
+		});
+		
+		$("#graphAlpha").bootstrapSlider({ // graphAlpha
+			value: oconfig.graphAlpha,
+			step: 0.1,
+			min: 0,
+			max: 1
+		});
+		$("#graphAlphaValue").text((oconfig.graphAlpha * 100) + '%');
+		$("#graphAlpha").on("slide", function(e) {
+			$("#graphAlphaValue").text((e.value * 100) + '%');
+		});
+		
+		// Layout
+		if (oconfig.layoutVertical) {
+			$('#layoutVerticalTop').button('toggle');
+		} else {
+			$('#layoutVerticalBottom').button('toggle');
+		}
+		if (oconfig.layoutHorizontal) {
+			$('#layoutHorizontalLeft').button('toggle');
+		} else {
+			$('#layoutHorizontalRight').button('toggle');
+		}
+		
+		// Effects
+		if (oconfig.showMaxhits) $("#showMaxhits").prop('checked', true);
+		if (oconfig.critBlip) $("#critBlip").prop('checked', true);
+		if (oconfig.deathColor) $("#deathColor").prop('checked', true);
+		if (oconfig.deathShake) $("#deathShake").prop('checked', true);
+		if (oconfig.deathBlood) $("#deathBlood").prop('checked', true);
+			
         function show(shown) {
             hideAll();
             document.getElementById(shown).style.display = 'block';			
