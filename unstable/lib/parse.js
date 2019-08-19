@@ -5,6 +5,7 @@ const toArray = o => Object.keys(o).map(_ => o[_])
 const SORTABLE = {}
 
 function Data(data) {
+	Console.log(data);
 	this.update(data);
 }
 

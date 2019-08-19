@@ -300,7 +300,6 @@ class WebSocketImpl extends ActWebsocketInterface
       {
           document.dispatchEvent(new CustomEvent('onOverlayDataUpdate', { detail: e.detail.msg }));
       }
-	  console.log(e.detail.msg);
   }
 };
 
