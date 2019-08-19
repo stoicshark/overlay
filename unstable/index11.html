@@ -444,8 +444,10 @@
 	});
 	
 	// UPDATE
+	var debug = '';
 	function update(rawdata) {
 		var data = new Data(rawdata);
+		debug = data;
 		
 		// Display Legend
 		var ele = document.getElementById('legend');
@@ -545,14 +547,13 @@
 		}
 		
 		//if (true) {
-		if (data.isActive == "true" || data.isActive) {
+		if (data.isActive) {
 			// Check for new players
 			for (let e in data.Combatant) {
 				let entry = data.Combatant[e];
 				if (inArrayKey(players, 'name', entry['name']) == false && Player.isValid(entry)) {
 					// Make a new player entry
 					let newPlayer = new Player(entry);
-					debug2 = newPlayer;
 					newPlayer.divID = players.length;
 					
 					switch (newPlayer.role) {
