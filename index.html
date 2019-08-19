@@ -320,7 +320,7 @@
 			localStorage.setItem('config', JSON.stringify(config)); // Save everything in case there's something new
 		}
 	} catch (e) {
-		// Something is probably broken. Reset settings.
+		var config = new Config();
 		localStorage.setItem('config', JSON.stringify(config)); // There you go
 	}
 	
