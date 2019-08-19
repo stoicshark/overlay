@@ -37,7 +37,7 @@ var need_to_set_wsuri = (typeof wsUri === "undefined");
 
 if (need_to_set_wsuri)
 {
-	window.wsUri = "ws://@HOST_PORT@/MiniParse";
+	window.wsUri = "ws://@HOST_PORT@/";
 	need_to_get_host_port = typeof host_port === "undefined";
 }
 else
@@ -92,7 +92,7 @@ if (wsUri.indexOf('@HOST_PORT') !== -1)
 
 class ActWebsocketInterface
 {
-	constructor(uri, path = "MiniParse") {
+	constructor(uri, path = "") {
 		// url check
 		var querySet = this.getQuerySet();
 		if(typeof querySet["HOST_PORT"] != 'undefined')
@@ -299,6 +299,7 @@ class WebSocketImpl extends ActWebsocketInterface
       if (e.detail.msgtype == "CombatData")
       {
           document.dispatchEvent(new CustomEvent('onOverlayDataUpdate', { detail: e.detail.msg }));
+		  console.log(e.detail.msg);
       }
   }
 };
