@@ -4,7 +4,7 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
 	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Expires" content="0" />
+	<Uncaught SyntaxError: Unexpected token classmeta http-equiv="Expires" content="0" />
 	<meta name="robots" content="noindex, nofollow"/>
 	<meta name="googlebot" content="noindex, nofollow"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -12,7 +12,6 @@
 	<script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
 	<script src="lib/chart.bundle.min.js" type="text/javascript"></script>
 	<script src="lib/TweenMax.min.js" type="text/javascript"></script>
-	<script src="lib/actwebsocket.js" type="text/javascript"></script>
 	<script src="lib/config.js" type="text/javascript"></script>
 	<script src="lib/parse.js" type="text/javascript"></script>
 	<script src="lib/player.js" type="text/javascript"></script>
@@ -33,6 +32,21 @@
 	<div id="main">
 	</div>
 	<div id="updates-html">
+		<span style="font-family: voltage; font-size: 20px;">rev.12</span><br />
+		- Settings may reset<br />
+		- Script cleaned up<br />
+		- Theme framework complete<br />
+		- Fixed ACTWebSocket asking for connection requests when not using it's plugin<br />
+		- Fixed possible cases where non combatants were logged (?)<br />
+		- Name formatting settings<br />
+		- YOU detection and override<br />
+		- Color options for YOU<br />
+		- 24 Raid setting, on by default<br />
+		- Show Limitbreak setting, on by default<br />
+		- You can now view party member DPS graphs by clicking on their names<br />
+		- You can now view combined party/raid DPS graphs by clicking on the graph<br />
+		- Settings added for Graph<br />
+		<span style="font-size: 8px;">- Toasty</span><br />
 		<span style="font-family: voltage; font-size: 20px;">rev.11</span><br />
 		- ACTWebSocket support(?)<br />
 		- Catch-all if settings fail to load<br />
@@ -90,6 +104,7 @@
 		- Fix (maybe) for wrong color displayed when players are generated<br />
 		- Performance tweaks
 	</div>
+<script src="lib/actwebsocket.js" type="text/javascript"></script>
 <script src="lib/main.js" type="text/javascript"></script>
 </body>
 </html>

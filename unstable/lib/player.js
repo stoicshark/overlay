@@ -1,5 +1,3 @@
-"use_strict";
-
 function Player(data) {	
 	this.name = data['name'];
 	this.dispname = data['name'];
@@ -21,12 +19,14 @@ function Player(data) {
 	this.crithits = 0;
 	this.state = "initialize";
 	this.dpsGraph = [0];
+	this.dpsLabel = [1];
+	this.dpsTick = 1;
 	this.divID = 0;
 	this.divRGBA = "";
 	this.role = Player.getRole(this.name, this.job);
 }
 
-Player.prototype.update = function (data) {
+Player.prototype.update = function (data, config) {
 	for (var player in data) {
 		if (this.name == data[player]['name']) {
 			var d = data[player];
@@ -53,10 +53,13 @@ Player.prototype.update = function (data) {
 				this.crithits = d['crithits'];
 				this.displaycrit = true;
 			}
-			
 			// Last 10 combined hits should make a more accurate graph
-			if (!isNaN(d['Last10DPS'])) {
+			if (!isNaN(d['Last10DPS']) && config.enableGraph && this.dpsTick == config.graphTick) {
+				this.dpsTick = 1;
 				this.dpsGraph.push(parseFloat(d['Last10DPS']));
+				this.dpsLabel.push(this.dpsLabel.length);
+			} else {
+				this.dpsTick = this.dpsTick + 1;
 			}
 			
 			var shortenMaxhit = [

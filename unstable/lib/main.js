@@ -30,15 +30,21 @@ let updates = true;
 let players = [];
 let activeGate = false;
 let topDamage = 0;
+let totalDpsGraph = [0];
+let totalDpsLabel = [1];
+let totalDpsTick = 1;
+let totalTick = 0;
+let currentTrack = '';
+if (config.graphTrack == 'Yourself') currentTrack = config.detectYou;
 
 var ctx = document.getElementById('graph').getContext('2d');
 var graphCanvas = new Chart(ctx, 
 	{
 		type: 'line',
 		data: {
-			labels: [1],
+			labels: [],
 			datasets: [{
-				data: [0],
+				data: [],
 				backgroundColor: config.graphFillColor,
 				borderColor: config.graphLineColor,
 				borderWidth: 2
@@ -145,7 +151,13 @@ function update(rawdata) {
 	
 	// OverlayPlugin or WebSocket, this is a poor hack/work around
 	if (data.overlayPlugin) {
-		clearTimeout(WebSocketTimeout);
+		try {
+			clearTimeout(WebSocketTimeout); // Forceful Stop
+		} catch (e) {
+			// Older OverlayPlugin versions have issues with ACTWebSocket syntax.
+			// This leads to this timer never being defined so I'm throwing it away
+			// with a try and catch until I can be bothered with it. I'm sorry.
+		}
 	}
 	
 	// Update legend data
@@ -166,10 +178,22 @@ function update(rawdata) {
 	if (!isNaN(data.Encounter['dps'])) {
 		encounterDPS = data.Encounter['dps'];
 	}
-	graphhtml += '<span class="span-absolute" style="left: 2; top: 0;">Total DPS: ' + encounterDPS + '</span>';
+	graphhtml += '<span class="span-absolute info-totaldps" style="left: 2; top: 0;">Total DPS: ' + encounterDPS + '</span>';
 	graphhtml += '<span class="span-absolute" style="left: 2; bottom: 0;">Time: ' + data.Encounter['duration'] + '</span>';
 	graphhtml += '<span class="span-absolute" style="right: 2; top: 0; text-align: right;">' + data.Encounter['title'] + '</span>';
 	ele.innerHTML = graphhtml;
+	
+	if (config.enableGraph) {
+		$('#graph-html .info-totaldps').click(function(){ 
+			changeMainGraph(totalDpsGraph.slice(), totalDpsLabel.slice());
+			currentTrack = '';
+		});
+		$('#graph-html .info-totaldps').mouseover(function() {
+			$(this).css('background-color', 'rgba(255, 255, 255, 0.2)');
+		}).mouseout(function() {
+			$(this).css('background-color', 'transparent');
+		});
+	}
 
 	// Is the data gate primed?
 	if (!activeGate) {
@@ -190,9 +214,9 @@ function update(rawdata) {
 			{
 				type: 'line',
 				data: {
-					labels: [1],
+					labels: [],
 					datasets: [{
-						data: [0],
+						data: [],
 						backgroundColor: config.graphFillColor,
 						borderColor: config.graphLineColor,
 						borderWidth: 2
@@ -243,6 +267,14 @@ function update(rawdata) {
 			updates = false;
 			$('#updates-html').remove();
 		}
+		
+		totalDpsGraph = [0];
+		totalDpsLabel = [0];
+		totalDpsTick = 1;
+		totalTick = 0;
+		if (config.graphTrack == 'Yourself') {
+			currentTrack = config.detectYou;
+		}
 	}
 	
 	//if (true) {
@@ -280,16 +312,32 @@ function update(rawdata) {
 						newPlayer.divRGBA = config.defaultRGBA;
 						newPlayer.divRGBA_ = config.defaultRGBA_;
 						newPlayer.divRGBA__ = config.defaultRGBA__;
+						break;
 				}
-				createDiv(newPlayer, theme);
-				players.push(newPlayer);
+				
+				if (newPlayer.name == config.detectYou) {
+					newPlayer.dispname = config.overrideYou;
+					if (config.enableYouColor) {
+						newPlayer.divRGBA = config.youRGBA;
+						newPlayer.divRGBA_ = config.youRGBA_;
+						newPlayer.divRGBA__ = config.youRGBA__;
+					}
+				}
+				
+				if (newPlayer.role != 'limit break') {
+					createDiv(newPlayer, theme);
+					players.push(newPlayer);
+				} else if (newPlayer.role == 'limit break' && config.showLb) {
+					createDiv(newPlayer, theme);
+					players.push(newPlayer);
+				}
 			}
 		}
 		
 		// Update then sort players
 		topDamage = 0;
 		for (let p in players) {
-			players[p].update(data.Combatant);
+			players[p].update(data.Combatant, config);
 			if (parseFloat(players[p].dps) > topDamage) topDamage = parseFloat(players[p].dps);
 		}
 		players.sort(function(a, b) {
@@ -302,17 +350,32 @@ function update(rawdata) {
 			// Animate
 			animateDiv(players[d], d, theme);
 			
-			// Graph updates
-			if (players[d].name == "YOU" && players[d].dpsGraph.length % 3 === 0) {
-				var graphx = players[d].dpsGraph.length;
-				var graphy = players[d].dpsGraph[graphx-1];
-				graphCanvas.data.labels.push(graphx);
+			// Graph updates if player
+			if (players[d].name == currentTrack && config.enableGraph && players[d].dpsLabel.length > totalTick) {
+				totalTick = players[d].dpsLabel.length;
+				graphCanvas.data.labels.push(totalTick);
 				graphCanvas.data.datasets.forEach((dataset) => {
-					dataset.data.push(graphy);
+					dataset.data.push(players[d].dpsGraph[totalTick - 1]);
 				});
 				graphCanvas.update();
-				
 			}
+		}
+		
+		// Graph updates and if Total DPS
+		if (!isNaN(data.Encounter['Last10DPS']) && config.enableGraph && totalDpsTick == config.graphTick) {
+			totalDpsGraph.push(parseFloat(data.Encounter['Last10DPS']));
+			totalDpsLabel.push(totalDpsLabel.length);
+			totalDpsTick = 1;
+		} else {
+			totalDpsTick++;
+		}
+		if (currentTrack == '' && totalDpsLabel.length > totalTick) {
+			totalTick = totalDpsLabel.length;
+			graphCanvas.data.labels.push(totalTick);
+			graphCanvas.data.datasets.forEach((dataset) => {
+				dataset.data.push(totalDpsGraph[totalTick - 1]);
+			});
+			graphCanvas.update();
 		}
 	} else {
 		// Show menu items during combat
@@ -322,10 +385,73 @@ function update(rawdata) {
 			document.getElementById('graph-cont').style.width = 'calc(100% - 26px)';
 		}
 	
+		// Resets
 		activeGate = false;
 		players.length = 0;
 		players = [];
 	}
+}
+
+function changeMainGraph(gData, lData) {
+	// Clear the graph and create a new one
+	graphCanvas.clear();
+	graphCanvas.destroy();
+	$('#graph').remove();
+	$('#graph-cont').append('<canvas id="graph" height="50" width="100%"><canvas>');
+	ctx = document.getElementById('graph').getContext('2d');
+	graphCanvas = new Chart(ctx, 
+		{
+			type: 'line',
+			data: {
+				labels: lData,
+				datasets: [{
+					data: gData,
+					backgroundColor: config.graphFillColor,
+					borderColor: config.graphLineColor,
+					borderWidth: 2
+				}]
+			},
+			options:{
+				responsive: true,
+				maintainAspectRatio: false,
+				elements: {
+					line: {
+						tension: 0
+					},
+					point:{
+						radius: 0
+					}
+				},
+				legend: {
+					display: false
+				},
+				scales: {
+					xAxes: [{
+						display: false
+					}],
+					yAxes: [{
+						display: false
+					}]
+				},
+				tooltips: {
+					 enabled: false
+				},
+				hover: {
+					mode: null
+				}
+			}
+		}
+	);
+	graphCanvas.update();
+	totalTick = lData.length;
+	
+	/*for (var gd in lData) {
+		graphCanvas.data.labels.push(gd);
+		graphCanvas.data.datasets.forEach((dataset) => {
+			dataset.data.push(gData[gd]);
+		});
+		graphCanvas.update();
+	}*/
 }
 
 function inArrayKey(array, key, value) {
@@ -360,7 +486,6 @@ document.addEventListener("onOverlayStateUpdate", function (e) {
 });
 
 // THEMES
-
 function createDiv(player, theme) {
 	if (theme == 'thresher') {
 		let newEle = document.createElement("div");
@@ -397,7 +522,7 @@ function createDiv(player, theme) {
 		var eleHTML = '';
 
 		eleHTML += '<div class="player-effect-cont" style="box-shadow: inset 0 0 10px ' + player.divRGBA_ + ';"><div class="player-class-img" style="background-image: url(images/' + player.job + '.png);"></div></div>';
-		eleHTML += '<span class="player-name">' + player.name + '</span>';
+		eleHTML += '<span class="player-name">' + player.dispname + '</span>';
 		eleHTML += '<span class="player-dps-base" style="color: ' + config.playerDPSColor + '">' + player.dpsbase + '</span><span class="player-dps-dec" style="color: ' + config.playerDPSColor + '">.' + player.dpsdec + '</span>';
 		eleHTML += '<span class="player-stat crit" style="left: 25%; bottom: 1; margin-left: 3px;">' + player.crit + '</span>';
 		eleHTML += '<span class="player-stat dhit" style="left: 40%; bottom: 1; margin-left: 3px;">' + player.dhit + '</span>';
@@ -409,12 +534,26 @@ function createDiv(player, theme) {
 		newEle.innerHTML = eleHTML;
 
 		document.getElementById('main').appendChild(newEle);
+		
+		if (config.enableGraph) {
+			$('#' + player.divID + ' .player-name').click(function(){ 
+				changeMainGraph(player.dpsGraph.slice(), player.dpsLabel.slice());
+				currentTrack = player.name;
+			});
+			$('#' + player.divID + ' .player-name').mouseover(function() {
+				$(this).css('background-color', 'rgba(255, 255, 255, 0.2)');
+			}).mouseout(function() {
+				$(this).css('background-color', 'transparent');
+			});
+		}
 
 		/*Debug*/
 		$('#'+player.divID).click(function(){ 
 			//player.displaymaxhit = true;
 			//player.displaycrit = true;
-			player.state = 'dead';
+			//player.state = 'dead';
+			//changeMainGraph(player.dpsGraph, player.dpsLabel);
+			//currentTrack = player.name;
 		});
 	}
 }
@@ -484,7 +623,6 @@ function animateDiv(player, d, theme) {
 						$(sidepop).remove();
 					});
 				}
-				
 				/*TweenMax.to(sidepop, 0.5, {
 					top: "20%",
 					left: sideleft,
@@ -632,7 +770,6 @@ function animateDiv(player, d, theme) {
 					player.state = "alive";
 				});
 			}
-
 			/*TweenMax.to(ele, 0.2, {
 				right: '0'
 			});
