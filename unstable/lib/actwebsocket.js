@@ -1,6 +1,5 @@
-'use_strict';
-	
 try {
+	let WebSocketTimeout;
 	var QueryString = function () 
 	{
 		// This function is anonymous, is executed immediately and 
@@ -96,7 +95,10 @@ try {
 		constructor(uri, path = "MiniParse") {
 			// url check
 			var querySet = this.getQuerySet();
-			
+			if(typeof querySet["HOST_PORT"] != 'undefined')
+			{
+					uri = querySet["HOST_PORT"] + path;
+			}
 			this.uri = uri;
 			this.id = null;
 			this.activate = false;
@@ -279,11 +281,7 @@ try {
 		onBroadcastMessage(e)
 		{
 		}
-	}
-	
-	ActWebcocketInterface.checkURI = function (uri) {
-		
-	}
+	};
 
 	class WebSocketImpl extends ActWebsocketInterface
 	{
@@ -306,7 +304,6 @@ try {
 	};
 
 	var webs = null;
-	var WebSocketTimeout;
 	$(document).ready(function() {
 	  webs = new WebSocketImpl(wsUri);
 	  webs.connect();
