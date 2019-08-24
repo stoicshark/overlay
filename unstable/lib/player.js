@@ -1,4 +1,5 @@
-function Player(data) {	
+function Player(data , dconfig) {	
+	this.config = dconfig;
 	this.name = data['name'];
 	this.dispname = data['name'];
 	this.job = data['Job'].toLowerCase();
@@ -26,7 +27,7 @@ function Player(data) {
 	this.role = Player.getRole(this.name, this.job);
 }
 
-Player.prototype.update = function (data, config) {
+Player.prototype.update = function (data) {
 	for (var player in data) {
 		if (this.name == data[player]['name']) {
 			var d = data[player];

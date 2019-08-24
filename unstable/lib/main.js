@@ -284,7 +284,7 @@ function update(rawdata) {
 			let entry = data.Combatant[e];
 			if (inArrayKey(players, 'name', entry['name']) == false && Player.isValid(entry)) {
 				// Make a new player entry
-				let newPlayer = new Player(entry);
+				let newPlayer = new Player(entry, config);
 				newPlayer.divID = players.length;
 				
 				switch (newPlayer.role) {
@@ -337,7 +337,7 @@ function update(rawdata) {
 		// Update then sort players
 		topDamage = 0;
 		for (let p in players) {
-			players[p].update(data.Combatant, config);
+			players[p].update(data.Combatant);
 			if (parseFloat(players[p].dps) > topDamage) topDamage = parseFloat(players[p].dps);
 		}
 		players.sort(function(a, b) {
@@ -561,7 +561,7 @@ function createDiv(player, theme) {
 function animateDiv(player, d, theme) {
 	if (theme == "thresher") { 
 		// Update div elements
-		let ele = document.getElementById(player.divID);
+		let eleA = document.getElementById(player.divID);
 		var dpsbarwidth = (parseFloat(player.dps)/topDamage) * 100;
 		
 		$('#' + player.divID + ' .player-dps-base').text(player.dpsbase);
@@ -667,59 +667,59 @@ function animateDiv(player, d, theme) {
 				let playerRGBA = player.divRGBA;
 				let playerRGBA_ = player.divRGBA_;
 				let playerRGBA__ = player.divRGBA__;
-				ele.style.background = 'linear-gradient(90deg, rgba(200, 200, 200, ' + config.playerAlpha + ') 0%, rgba(0,0,0,' + config.playerAlpha + ') 50%)';
-				ele.getElementsByClassName('player-effect-cont')[0].style.boxShadow = 'inset 0 0 10px rgba(200, 200, 200, ' + config.playerAlpha + ')';
+				eleA.style.background = 'linear-gradient(90deg, rgba(200, 200, 200, ' + config.playerAlpha + ') 0%, rgba(0,0,0,' + config.playerAlpha + ') 50%)';
+				eleA.getElementsByClassName('player-effect-cont')[0].style.boxShadow = 'inset 0 0 10px rgba(200, 200, 200, ' + config.playerAlpha + ')';
 				
-				TweenMax.to(ele, 3, {
+				TweenMax.to(eleA, 3, {
 					background: 'linear-gradient(90deg, ' + playerRGBA + ' 0%, ' + playerRGBA__ + ' 50%)',
 					delay: '2'
 				});
-				TweenMax.to(ele.getElementsByClassName('player-effect-cont')[0], 3, {
+				TweenMax.to(eleA.getElementsByClassName('player-effect-cont')[0], 3, {
 					boxShadow: 'inset 0 0 10px ' + playerRGBA_,
 					delay: '2'
 				});
 			}
 			
 			if (config.deathShake) {
-				TweenMax.fromTo(ele, 4, { rotation: 0.5}, {rotation: 0, ease:Elastic.easeOut.config(5, 0.01)});
+				TweenMax.fromTo(eleA, 4, { rotation: 0.5}, {rotation: 0, ease:Elastic.easeOut.config(5, 0.01)});
 			}
 			
 			if (config.deathBlood) {
 				for (let i = 0; i < 3; i++) {
-				var num = Math.floor(Math.random() * ele.clientWidth);
-				var numw = Math.floor(Math.random() * (60 - 5 + 1) + 5);
-				var numh = Math.floor(Math.random() * (ele.clientHeight - 5 + 1) + 5);
-				let splat = document.createElement('div');
-				splat.setAttribute('id', player.divID + num + Date.now());
-				splat.setAttribute('class', 'bloodsplat');
-				splat.style.left = num + 'px';
-				splat.style.width = numw + 'px';
-				splat.style.height = numh + 'px';
-				splat.style.filter = 'url(#splatfilter' + num + ')';
-				var NS = "http://www.w3.org/2000/svg";
-				var svg = document.createElementNS(NS, 'svg');
-				var filter = document.createElementNS(NS, 'filter');
-				filter.setAttribute('id', 'splatfilter' + num);
-				var feturb = document.createElementNS(NS, 'feTurbulence');
-				feturb.setAttribute('type', 'fractalNoise');
-				feturb.setAttribute('baseFrequency', '0.1');
-				feturb.setAttribute('seed', num);
-				var fedisp = document.createElementNS(NS, 'feDisplacementMap');
-				fedisp.setAttribute('in', 'SourceGraphic');
-				fedisp.setAttribute('scale', '50');
-				filter.appendChild(feturb);
-				filter.appendChild(fedisp);
-				svg.appendChild(filter);
-				splat.appendChild(svg);
-				ele.appendChild(splat);
-				
-				TweenMax.to(splat, 3, {
-					opacity: '0',
-					delay: '2'
-				});
-				setTimeout(function(){
-					$(splat, this).remove();
-				}, 5000);
+					var num = Math.floor(Math.random() * ele.clientWidth);
+					var numw = Math.floor(Math.random() * (60 - 5 + 1) + 5);
+					var numh = Math.floor(Math.random() * (ele.clientHeight - 5 + 1) + 5);
+					let splat = document.createElement('div');
+					splat.setAttribute('id', player.divID + num + Date.now());
+					splat.setAttribute('class', 'bloodsplat');
+					splat.style.left = num + 'px';
+					splat.style.width = numw + 'px';
+					splat.style.height = numh + 'px';
+					splat.style.filter = 'url(#splatfilter' + num + ')';
+					var NS = "http://www.w3.org/2000/svg";
+					var svg = document.createElementNS(NS, 'svg');
+					var filter = document.createElementNS(NS, 'filter');
+					filter.setAttribute('id', 'splatfilter' + num);
+					var feturb = document.createElementNS(NS, 'feTurbulence');
+					feturb.setAttribute('type', 'fractalNoise');
+					feturb.setAttribute('baseFrequency', '0.1');
+					feturb.setAttribute('seed', num);
+					var fedisp = document.createElementNS(NS, 'feDisplacementMap');
+					fedisp.setAttribute('in', 'SourceGraphic');
+					fedisp.setAttribute('scale', '50');
+					filter.appendChild(feturb);
+					filter.appendChild(fedisp);
+					svg.appendChild(filter);
+					splat.appendChild(svg);
+					eleA.appendChild(splat);
+					
+					TweenMax.to(splat, 3, {
+						opacity: '0',
+						delay: '2'
+					});
+					setTimeout(function(){
+						$(splat, this).remove();
+					}, 5000);
 				}
 			}
 		}
@@ -731,19 +731,20 @@ function animateDiv(player, d, theme) {
 		
 		if (config.layoutVertical) {
 			divOffset = (d * divHeight) + (d * 5) + 2;
-			curOffset = ele.style.top;
+			curOffset = eleA.style.top;
 		} else {
 			divOffset = (d * divHeight) + (d * 5) + 5;
-			curOffset = ele.style.bottom;
-		}
+			curOffset = eleA.style.bottom;
+		}		
 		
+		// Sorting animation
 		if (player.state != "initialize" && curOffset != divOffset) {
 			if (config.layoutVertical) {
-				TweenMax.to(ele, 0.2, {
+				TweenMax.to(eleA, 0.2, {
 					top: divOffset + 'px'
 				});
 			} else {
-				TweenMax.to(ele, 0.2, {
+				TweenMax.to(eleA, 0.2, {
 					bottom: divOffset + 'px'
 				});
 			}
@@ -752,30 +753,38 @@ function animateDiv(player, d, theme) {
 		// Initialize and move, not animated
 		if (player.state == "initialize") {
 			if (config.layoutVertical) {
-				ele.style.top = divOffset + 'px';
+				eleA.style.top = divOffset + 'px';
 			} else {
-				ele.style.bottom = divOffset + 'px';
+				eleA.style.bottom = divOffset + 'px';
 			}
 			
 			if (config.layoutHorizontal) {
-				$(ele, this).animate({ // JQuery does this better
+				$(eleA, this).animate({ // JQuery does this better
 					'left': '0'
 				}, 200, function(e){
 					player.state = "alive";
 				});
+				/*TweenMax.to(eleA, 1, {
+					left: '0px',
+					immediateRender: true,
+					onComplete: function(){
+						player.state = 'alive';
+					}
+				});*/
 			} else {
-				$(ele, this).animate({ // JQuery does this better
+				$(eleA, this).animate({ // JQuery does this better
 					'right': '0'
 				}, 200, function(e){
 					player.state = "alive";
 				});
+				/*TweenMax.to(eleA, 1, {
+					right: '0px',
+					immediateRender: true,
+					onComplete: function(){
+						player.state = 'alive';
+					}
+				});*/
 			}
-			/*TweenMax.to(ele, 0.2, {
-				right: '0'
-			});
-			setTimeout(function(){
-				player.state = "alive";
-			}, 200);*/
 		}
 	}
 }
