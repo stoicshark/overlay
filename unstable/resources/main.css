@@ -130,13 +130,36 @@ body, html {
 	font-size: 17px;
 }
 
+.player-name-24 {
+	position: absolute;
+	width: 100%;
+	top: -1;
+	left: 0;
+	text-align: center;
+	font-family: "voltage";
+	letter-spacing: 1px;
+	font-size: 17px;
+}
+
 .player-dps-base {
 	position: relative;
 	width: 25%;
 	left: 5;
 	top: 1;
 	font-family: "voltage";
+	text-align: right;
 	font-size: 28px;
+	overflow: hidden;
+}
+
+.player-dps-base-24 {
+	position: absolute;
+	width: 100%;
+	left: 0;
+	top: 15;
+	font-family: "aeromatics";
+	text-align: center;
+	font-size: 12px;
 	overflow: hidden;
 }
 

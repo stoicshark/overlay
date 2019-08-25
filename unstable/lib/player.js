@@ -1,7 +1,13 @@
 function Player(data , dconfig) {	
 	this.config = dconfig;
 	this.name = data['name'];
-	this.dispname = data['name'];
+	this.name1 = data['name'];
+	this.name2 = data['name'];
+	if (this.name == this.config.detectYou) {
+		this.dispname = this.config.overrideYou;
+	} else {
+		this.dispname = data['name'];
+	}
 	this.job = data['Job'].toLowerCase();
 	this.dps = 0.00;
 	this.dpsbase = 0;
@@ -25,6 +31,25 @@ function Player(data , dconfig) {
 	this.divID = 0;
 	this.divRGBA = "";
 	this.role = Player.getRole(this.name, this.job);
+	this.top8 = true;
+	this.owner = "";
+	
+	if (this.role == 'pet') {
+		var petname = this.dispname.split(" (");
+		this.dispname = petname[0];
+		petname = petname[1].slice(0, -1);
+		this.owner = petname;
+		this.name1 = this.dispname;
+		this.name2 = this.dispname.charAt(0) + '.';
+	} else {
+		try {
+			var namearr = this.dispname.split(" ");
+			this.name1 = namearr[0] + ' ' + namearr[1].charAt(0) + '.';
+			this.name2 = namearr[0].charAt(0) + '. ' + namearr[1].charAt(0) + '.';
+		} catch (e) {
+			// throw
+		}
+	}
 }
 
 Player.prototype.update = function (data) {
@@ -37,6 +62,11 @@ Player.prototype.update = function (data) {
 				var dpsarr = this.dps.split(".");
 				this.dpsbase = dpsarr[0];
 				this.dpsdec = dpsarr[1];
+			}
+			
+			// If debug player...
+			if (this.job == debug) {
+				this.dps = Math.floor(Math.random() * (1000 - 500 + 1) + 500);
 			}
 			
 			this.crit = d['crithit%'];

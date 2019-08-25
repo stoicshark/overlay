@@ -1,5 +1,5 @@
 try {
-	let WebSocketTimeout;
+	var WebSocketTimeout;
 	var QueryString = function () 
 	{
 		// This function is anonymous, is executed immediately and 

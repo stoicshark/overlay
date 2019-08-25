@@ -35,6 +35,8 @@ let totalDpsLabel = [1];
 let totalDpsTick = 1;
 let totalTick = 0;
 let currentTrack = '';
+let lbExists = false;
+let raid24 = false;
 if (config.graphTrack == 'Yourself') currentTrack = config.detectYou;
 
 var ctx = document.getElementById('graph').getContext('2d');
@@ -268,6 +270,8 @@ function update(rawdata) {
 			$('#updates-html').remove();
 		}
 		
+		raid24 = false;
+		lbExists = false;
 		totalDpsGraph = [0];
 		totalDpsLabel = [0];
 		totalDpsTick = 1;
@@ -328,10 +332,16 @@ function update(rawdata) {
 					createDiv(newPlayer, theme);
 					players.push(newPlayer);
 				} else if (newPlayer.role == 'limit break' && config.showLb) {
+					lbExists = true;
 					createDiv(newPlayer, theme);
 					players.push(newPlayer);
 				}
 			}
+		}
+		
+		// Raid 24
+		if (players.length > 8 && config.enableRaid24) {
+			raid24 = true;
 		}
 		
 		// Update then sort players
@@ -348,7 +358,19 @@ function update(rawdata) {
 		// Animation
 		for (let d in players) {
 			// Animate
-			animateDiv(players[d], d, theme);
+			var lbOffset = 0;
+			if (lbExists) lbOffset = 1;
+			var valid24 = false;
+			if (config.layoutVertical && d > 7) {
+				valid24 = true;
+			} else if (!config.layoutVertical && d < (players.length - 8)) {
+				valid24 = true;
+			}
+			if (valid24 && raid24 && players[d].role != 'limit break') {
+				animateDiv24(players[d], d, theme);
+			} else {
+				animateDiv(players[d], d, theme);
+			}
 			
 			// Graph updates if player
 			if (players[d].name == currentTrack && config.enableGraph && players[d].dpsLabel.length > totalTick) {
@@ -476,6 +498,18 @@ function sortByKey(array, key) {
 	}).reverse();
 }
 
+function createDebugPlayer() {
+	var debugPlayer = new Player({name:'Debug Dummy' + players.length, Job:'debug'}, config);
+	debugPlayer.divID = players.length;
+	debugPlayer.divRGBA = config.defaultRGBA;
+	debugPlayer.divRGBA_ = config.defaultRGBA_;
+	debugPlayer.divRGBA__ = config.defaultRGBA__;
+	debugPlayer.dps = Math.floor(Math.random() * (1000 - 500 + 1) + 500);
+	debugPlayer.dpsbase = debugPlayer.dps;
+	createDiv(debugPlayer, theme);
+	players.push(debugPlayer);
+}
+
 // Hide and show handle
 document.addEventListener("onOverlayStateUpdate", function (e) {
 	if (!e.detail.isLocked) {
@@ -516,7 +550,7 @@ function createDiv(player, theme) {
 
 		newEle.style.height = '30px';
 		newEle.style.background = 'linear-gradient(90deg, ' + player.divRGBA + ' 0%, ' + player.divRGBA__ + ' 50%)';
-		newEle.style.boxShadow = '2px 3px 4px rgba(0, 0, 0, ' + config.playerAlpha + ')';
+		newEle.style.boxShadow = '0px 3px 4px -2px rgba(0, 0, 0, ' + config.playerAlpha + ')';
 		newEle.style.color = config.playerTextColor;
 
 		var eleHTML = '';
@@ -535,7 +569,7 @@ function createDiv(player, theme) {
 
 		document.getElementById('main').appendChild(newEle);
 		
-		if (config.enableGraph) {
+		if (config.enableGraph && player.role != 'limit break') {
 			$('#' + player.divID + ' .player-name').click(function(){ 
 				changeMainGraph(player.dpsGraph.slice(), player.dpsLabel.slice());
 				currentTrack = player.name;
@@ -554,6 +588,7 @@ function createDiv(player, theme) {
 			//player.state = 'dead';
 			//changeMainGraph(player.dpsGraph, player.dpsLabel);
 			//currentTrack = player.name;
+			//createDebugPlayer();
 		});
 	}
 }
@@ -562,6 +597,43 @@ function animateDiv(player, d, theme) {
 	if (theme == "thresher") { 
 		// Update div elements
 		let eleA = document.getElementById(player.divID);
+		
+		// Was this player previously not in the top8?
+		if (!player.top8) {
+			// Show unimportant data
+			$('#' + player.divID + ' .player-dps-dec').show();
+			$('#' + player.divID + ' .player-stat.crit').show();
+			$('#' + player.divID + ' .player-stat.dhit').show();
+			$('#' + player.divID + ' .player-stat.critdhit').show();
+			$('#' + player.divID + ' .player-stat.deaths').show();
+			$('#' + player.divID + ' .player-stat.maxhit').show();
+			
+			// If so, restyle div to a normal div.
+			eleA.style.left = 'auto';
+			eleA.style.right = 'auto';
+			eleA.style.top = 'auto';
+			eleA.style.bottom = 'auto';
+			
+			if (config.playerFill) {
+				eleA.style.width = '100%';
+			} else {
+				eleA.style.width = 'calc(100% - 100px)';
+			}
+			
+			if (config.layoutHorizontal) {
+				eleA.style.left = '0)';
+			} else {
+				eleA.style.right = '0';
+			}
+			
+			// Restyle
+			$('#' + player.divID + ' .player-dps-base').removeClass('player-dps-base-24');
+			$('#' + player.divID + ' .player-name').removeClass('player-name-24');
+			
+			// Change name
+			$('#' + player.divID + ' .player-name').text(player.dispname);
+		}
+		
 		var dpsbarwidth = (parseFloat(player.dps)/topDamage) * 100;
 		
 		$('#' + player.divID + ' .player-dps-base').text(player.dpsbase);
@@ -572,6 +644,7 @@ function animateDiv(player, d, theme) {
 		$('#' + player.divID + ' .player-stat.deaths').text(player.deaths);
 		$('#' + player.divID + ' .player-stat.maxhit').html(player.maxhit + '<br />' + player.maxhitnum);
 		$('#' + player.divID + ' .player-dps-bar').width(dpsbarwidth + '%');
+
 		
 		if (config.layoutHorizontal) {
 			$('#' + player.divID + ' .player-dps-bar').css('left', '0');
@@ -726,16 +799,37 @@ function animateDiv(player, d, theme) {
 		
 		// Always animate sorting
 		var divHeight = 30;
-		var divOffset = '';
-		var curOffset = '';
+		var divOffset = 0;
+		var curOffset = 0;
+		var raidOffset = parseInt(d);
+		
+		if (raid24 && config.layoutVertical) {
+			// nothing
+		} else if (raid24 && !config.layoutVertical) {
+			if (players.length > 16) {
+				raidOffset = parseInt(d) - (players.length - 9) + 1;
+			} else {
+				raidOffset = parseInt(d) - (players.length - 9);
+			}
+		}
 		
 		if (config.layoutVertical) {
-			divOffset = (d * divHeight) + (d * 5) + 2;
+			divOffset = (raidOffset * divHeight) + (raidOffset * 5) + 2;
+			// Quickly sort if back in top8
+			if (!player.top8) {
+				eleA.style.top = divOffset + 'px';
+				player.top8 = true; // Now in top8
+			}
 			curOffset = eleA.style.top;
 		} else {
-			divOffset = (d * divHeight) + (d * 5) + 5;
+			divOffset = (raidOffset * divHeight) + (raidOffset * 5) + 5;
+			// Quickly sort if back in top8
+			if (!player.top8) {
+				eleA.style.bottom = divOffset + 'px';
+				player.top8 = true; // Now in top8
+			}
 			curOffset = eleA.style.bottom;
-		}		
+		}
 		
 		// Sorting animation
 		if (player.state != "initialize" && curOffset != divOffset) {
@@ -788,3 +882,155 @@ function animateDiv(player, d, theme) {
 		}
 	}
 }
+
+function animateDiv24(player, d, theme) {
+	let ele24 = document.getElementById(player.divID);
+	// Was this player previously in the top8?
+	if (player.top8) {
+		// Hide unimportant data
+		$('#' + player.divID + ' .player-dps-dec').hide();
+		$('#' + player.divID + ' .player-stat.crit').hide();
+		$('#' + player.divID + ' .player-stat.dhit').hide();
+		$('#' + player.divID + ' .player-stat.critdhit').hide();
+		$('#' + player.divID + ' .player-stat.deaths').hide();
+		$('#' + player.divID + ' .player-stat.maxhit').hide();
+		
+		// If so, restyle div to a smaller div.
+		ele24.style.left = 'auto';
+		ele24.style.right = 'auto';
+		ele24.style.top = 'auto';
+		ele24.style.bottom = 'auto';
+		
+		ele24.style.width = '12.5%';
+		if (config.playerFill) {
+			ele24.style.width = '12.5%';
+		} else {
+			ele24.style.width = 'calc(12.5% - 12.5px)';
+		}
+		
+		// Restyle
+		$('#' + player.divID + ' .player-dps-base').addClass('player-dps-base-24');
+		$('#' + player.divID + ' .player-name').addClass('player-name-24');
+		if (config.layoutHorizontal) {
+			$('#' + player.divID + ' .player-dps-bar').css('left', '0');
+		} else {
+			$('#' + player.divID + ' .player-dps-bar').css('right', '0');
+		}
+		
+		// Change name
+		$('#' + player.divID + ' .player-name').text(player.name2);
+				
+		player.top8 = false; // No longer top8
+	}
+	
+	// Update relevant data
+	var dpsbarwidth = (parseFloat(player.dps)/topDamage) * 100;
+	$('#' + player.divID + ' .player-dps-bar').width(dpsbarwidth + '%');
+	$('#' + player.divID + ' .player-dps-base').text(player.dpsbase);
+	
+	// Beyond 8, containers are moved instantly and are not animated
+	
+	// Y Offset
+	var divHeight = 30;
+	var divOffsetY = 0;
+	var curOffsetY = 0;
+	var dint = parseInt(d);
+	var raidOffsetY = 0;
+	
+	if (config.layoutVertical) {
+		if (dint > 15) {
+			raidOffsetY = 9;
+		} else {
+			raidOffsetY = 8;
+		}
+	} else {
+		if (players.length > 16 && dint < (players.length - 16)) {
+			raidOffsetY = 0;
+		} else if (players.length > 16) {
+			raidOffsetY = 1;
+		}
+	}
+	
+	if (config.layoutVertical) {
+		divOffsetY = (raidOffsetY * divHeight) + (raidOffsetY * 5) + 2;
+		curOffsetY = ele24.style.top;
+	} else {
+		divOffsetY = (raidOffsetY * divHeight) + (raidOffsetY * 5) + 5;
+		curOffsetY = ele24.style.bottom;
+	}
+	
+	if (curOffsetY != divOffsetY) { // Save on moving vertically
+		if (config.layoutVertical) {
+			ele24.style.top = divOffsetY + 'px';
+		} else {
+			ele24.style.bottom = divOffsetY + 'px';
+		}
+	}
+	
+	// X Offset
+	var curOffsetX = 0;
+	var divOffsetX = 0;
+	var raidOffsetX = dint;
+	// dint starts at 0, we need a position between 0 and 7
+	if (config.layoutVertical) {
+		var flip = players.length;
+		if (dint > 15) {
+			flip = flip - 17;
+			raidOffsetX = dint - 16;
+		} else {
+			if (players.length > 16) {
+				flip = (flip - 9) - (flip - 16);
+			} else {
+				flip = flip - 9;
+			}
+			raidOffsetX = dint - 8;
+		}
+		// We need to flip raidOffetX
+		raidOffsetX = flip - raidOffsetX;
+	} else {
+		var flip = players.length;
+		if (dint > 7) {
+			flip = flip - 9;
+			raidOffsetX = dint - 8;
+		} else {
+			if (players.length > 16) {
+				flip = (flip - 9) - (flip - 16);
+			}
+			raidOffsetX = dint;
+		}
+	}
+	
+	if (config.playerFill) {
+		divOffsetX = 'calc(12.5% * ' + raidOffsetX + ')';
+	} else {
+		divOffsetX = 'calc((12.5% * ' + raidOffsetX + ') - (12.5px * ' + raidOffsetX + '))';
+	}
+	
+	if (config.layoutHorizontal) {
+		curOffsetX = ele24.style.left;
+	} else {
+		curOffsetX = ele24.style.right;
+	}
+	
+	if (curOffsetX != divOffsetX) { // Save on moving horizontally
+		if (config.layoutHorizontal) {
+			ele24.style.left = divOffsetX;
+		} else {
+			ele24.style.right = divOffsetX;
+		}
+	}
+	
+	// Resolve special animations
+	if (player.state != 'alive') player.state = 'alive';
+	if (player.displaycrit) player.displaycrit = false;
+	if (player.displaymaxhit) player.displaymaxhit = false;
+}
+
+
+
+
+
+
+
+
+
