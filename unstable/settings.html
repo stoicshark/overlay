@@ -135,6 +135,9 @@
 				<input id="enableRaid24" type="checkbox" data-toggle="toggle" data-size="sm">
 				Enable detection of 24 man raids
 				<br /><br />
+				<input id="enableTooltip24" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable tooltips on hover for those not in top 8 during 24 man raids
+				<br /><br />
 				<input id="showLb" type="checkbox" data-toggle="toggle" data-size="sm">
 				Show Limit breaks in a player bar
 				<br /><br />
@@ -180,13 +183,13 @@
 					<input id="graphTick" type="text" />
 				</div>
 				<div class="alert alert-warning" role="alert">
-					Lower tick rates may impact performance.
+					Lower tick rates are more accurate but may impact performance.
 				</div>
 				<input id="enableGraph24" type="checkbox" data-toggle="toggle" data-size="sm">
 				Enable collecting DPS data for graphs during 24 man raids 
 				<br /><br />
 				<div class="alert alert-warning" role="alert">
-					Enabling graph data collection for 24 players may heavily impact performance. While disabled and in a 24 man raid, the dps graph will only collect data for and track the default tracking option.
+					Enabling graph data collection for 24 players may heavily impact performance. While disabled and in a 24 man raid, the dps graph will only collect data for yourself and the total raid.
 				</div>
 			</div>
         </div>
@@ -368,6 +371,7 @@
 		
 		// General
 		if (oconfig.enableRaid24) $("#enableRaid24").prop('checked', true);
+		if (oconfig.enableTooltip24) $("#enableTooltip24").prop('checked', true);
 		if (oconfig.showLb) $("#showLb").prop('checked', true);
 		if (oconfig.graphFill) $("#graphFill").prop('checked', true);
 		if (oconfig.playerFill) $("#playerFill").prop('checked', true);
@@ -486,6 +490,7 @@
 			
 			// General
 			oconfig.enableRaid24 = $('#enableRaid24').prop('checked');
+			oconfig.enableTooltip24 = $('#enableTooltip24').prop('checked');
 			oconfig.showLb = $('#showLb').prop('checked');
 			oconfig.graphFill = $('#graphFill').prop('checked');
 			oconfig.playerFill = $('#playerFill').prop('checked');

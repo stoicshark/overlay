@@ -36,6 +36,7 @@ function Config() {
 	
 	// General/Style settings
 	this.enableRaid24 = true;
+	this.enableTooltip24 = true;
 	this.showLb = true;
 	this.playerFill = false;
 	this.graphFill = true;
@@ -99,6 +100,7 @@ Config.prototype.update = function (d) {
 	if (typeof d.graphTextColor !== 'undefined') this.graphTextColor = d.graphTextColor;
 	
 	if (typeof d.enableRaid24 !== 'undefined') this.enableRaid24 = d.enableRaid24;
+	if (typeof d.enableTooltip24 !== 'undefined') this.enableTooltip24 = d.enableTooltip24;
 	if (typeof d.showLb !== 'undefined') this.showLb = d.showLb;
 	if (typeof d.playerFill !== 'undefined') this.playerFill = d.playerFill;
 	if (typeof d.graphFill !== 'undefined') this.graphFill = d.graphFill;

@@ -25,6 +25,7 @@ function Player(data , dconfig) {
 	this.displaycrit = false;
 	this.crithits = 0;
 	this.state = "initialize";
+	this.stopGraph = false;
 	this.dpsGraph = [0];
 	this.dpsLabel = [1];
 	this.dpsTick = 1;
@@ -64,11 +65,6 @@ Player.prototype.update = function (data) {
 				this.dpsdec = dpsarr[1];
 			}
 			
-			// If debug player...
-			if (this.job == debug) {
-				this.dps = Math.floor(Math.random() * (1000 - 500 + 1) + 500);
-			}
-			
 			this.crit = d['crithit%'];
 			this.dhit = d['DirectHitPct'];
 			this.critdhit = d['CritDirectHitPct'];
@@ -85,9 +81,13 @@ Player.prototype.update = function (data) {
 				this.displaycrit = true;
 			}
 			// Last 10 combined hits should make a more accurate graph
-			if (!isNaN(d['Last10DPS']) && config.enableGraph && this.dpsTick == config.graphTick) {
+			if (config.enableGraph && this.dpsTick == config.graphTick && !this.stopGraph) {
 				this.dpsTick = 1;
-				this.dpsGraph.push(parseFloat(d['Last10DPS']));
+				if (!isNaN(d['Last10DPS'])) {
+					this.dpsGraph.push(parseFloat(d['Last10DPS']));
+				} else {
+					this.dpsGraph.push(parseFloat(0.00));
+				}
 				this.dpsLabel.push(this.dpsLabel.length);
 			} else {
 				this.dpsTick = this.dpsTick + 1;

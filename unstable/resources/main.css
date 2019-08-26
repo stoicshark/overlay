@@ -230,6 +230,49 @@ body, html {
 	background-color: #fff;
 }
 
+.tooltip {
+	position: fixed;
+	margin:0 auto;
+	left:50%;
+	top:50%;
+	visibility: hidden;
+	background: rgba(100,100,100,0.9);
+	width: 200px;
+	height: 70px;
+	margin-left: -105px;
+	margin-top: -40px;
+	padding: 5px;
+	text-align: center;
+	border-radius: 7px;
+	z-index: 1;
+}
+
+.tt-name {
+	font-family: "voltage";
+	letter-spacing: 1px;
+	font-size: 17px;
+}
+
+.tt-stat {
+	font-family: "aeromatics";
+	font-size: 12px;
+}
+
+.playerdiv:hover .tooltip.tt-hover {
+  visibility: visible;
+}
+
+#toasty {
+	position: absolute;
+	bottom: 0;
+	width: 200px;
+	height: 196px;
+	z-index: 100;
+	background-image: url(../images/toasty.png);
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
 .resizeHandle {
 	background-image: url(../images/handle.png);
 	background-position: bottom right;

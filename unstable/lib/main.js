@@ -35,9 +35,53 @@ let totalDpsLabel = [1];
 let totalDpsTick = 1;
 let totalTick = 0;
 let currentTrack = '';
-let lbExists = false;
 let raid24 = false;
 if (config.graphTrack == 'Yourself') currentTrack = config.detectYou;
+
+// Toasty?
+let eToasty = 0;
+let eToastyTimer;
+let eToastyTimerAlive;
+function funcToasty(mode) {
+	if (!mode) {
+		clearInterval(eToastyTimer);
+		eToastyTimerAlive = false;
+		var tdeath = 3;
+		if (raid24) tdeath = 7;
+		if (eToasty > tdeath) {
+			var dotoasty = document.getElementById("toasty-ogg");
+			dotoasty.volume = 0.6;
+			dotoasty.play();
+			
+			let toastydiv = document.createElement("div");
+			toastydiv.setAttribute('id', 'toasty');
+		
+			if (config.layoutHorizontal) {
+				toastydiv.style.transform = 'scaleX(-1)';
+				toastydiv.style.left = '-100';
+				document.getElementById('main').appendChild(toastydiv);
+				var tl = new TimelineMax();
+				tl.add(TweenMax.to(toasty, 0.3, { left: '0'}));
+				tl.add(TweenMax.to(toasty, 0.3, { left: '-100%', delay: '1' }));
+			} else {
+				toastydiv.style.right = '-100';
+				document.getElementById('main').appendChild(toastydiv);
+				var tl = new TimelineMax();
+				tl.add(TweenMax.to(toasty, 0.3, { right: '0'}));
+				tl.add(TweenMax.to(toasty, 0.3, { right: '-100%', delay: '1' }));
+			}
+			setTimeout(function(){
+				$(toasty, this).remove();
+			}, 2000);
+		}
+		eToasty = 0;
+	} else {
+		if (!eToastyTimerAlive) {
+			eToastyTimer = setTimeout(funcToasty, 5000);
+			eToastyTimerAlive = true;
+		}
+	}
+}
 
 var ctx = document.getElementById('graph').getContext('2d');
 var graphCanvas = new Chart(ctx, 
@@ -158,7 +202,7 @@ function update(rawdata) {
 		} catch (e) {
 			// Older OverlayPlugin versions have issues with ACTWebSocket syntax.
 			// This leads to this timer never being defined so I'm throwing it away
-			// with a try and catch until I can be bothered with it. I'm sorry.
+			// with a try and catch until it becomes a problem. Oh well.
 		}
 	}
 	
@@ -181,7 +225,7 @@ function update(rawdata) {
 		encounterDPS = data.Encounter['dps'];
 	}
 	graphhtml += '<span class="span-absolute info-totaldps" style="left: 2; top: 0;">Total DPS: ' + encounterDPS + '</span>';
-	graphhtml += '<span class="span-absolute" style="left: 2; bottom: 0;">Time: ' + data.Encounter['duration'] + '</span>';
+	graphhtml += '<span class="span-absolute info-time" style="left: 2; bottom: 0;">Time: ' + data.Encounter['duration'] + '</span>';
 	graphhtml += '<span class="span-absolute" style="right: 2; top: 0; text-align: right;">' + data.Encounter['title'] + '</span>';
 	ele.innerHTML = graphhtml;
 	
@@ -196,7 +240,7 @@ function update(rawdata) {
 			$(this).css('background-color', 'transparent');
 		});
 	}
-
+	
 	// Is the data gate primed?
 	if (!activeGate) {
 		activeGate = true;
@@ -271,7 +315,6 @@ function update(rawdata) {
 		}
 		
 		raid24 = false;
-		lbExists = false;
 		totalDpsGraph = [0];
 		totalDpsLabel = [0];
 		totalDpsTick = 1;
@@ -286,7 +329,8 @@ function update(rawdata) {
 		// Check for new players
 		for (let e in data.Combatant) {
 			let entry = data.Combatant[e];
-			if (inArrayKey(players, 'name', entry['name']) == false && Player.isValid(entry)) {
+			// 24 player hard cap per Encounter. Do you really need more?
+			if (inArrayKey(players, 'name', entry['name'], true) == false && Player.isValid(entry) && players.length < 24) {
 				// Make a new player entry
 				let newPlayer = new Player(entry, config);
 				newPlayer.divID = players.length;
@@ -331,8 +375,7 @@ function update(rawdata) {
 				if (newPlayer.role != 'limit break') {
 					createDiv(newPlayer, theme);
 					players.push(newPlayer);
-				} else if (newPlayer.role == 'limit break' && config.showLb) {
-					lbExists = true;
+				} else if (newPlayer.role == 'limit break' && config.showLb && !raid24) {
 					createDiv(newPlayer, theme);
 					players.push(newPlayer);
 				}
@@ -342,6 +385,11 @@ function update(rawdata) {
 		// Raid 24
 		if (players.length > 8 && config.enableRaid24) {
 			raid24 = true;
+			if (config.graphTrack == 'Yourself') {
+				currentTrack = config.detectYou;
+			} else {
+				currentTrack = '';
+			}
 		}
 		
 		// Update then sort players
@@ -349,6 +397,18 @@ function update(rawdata) {
 		for (let p in players) {
 			players[p].update(data.Combatant);
 			if (parseFloat(players[p].dps) > topDamage) topDamage = parseFloat(players[p].dps);
+			// Stop graphing if enableGraph24 is false
+			if (!config.enableGraph24 && raid24 && players[p].name != currentTrack && !players[p].stopGraph) {
+				players[p].stopGraph = true;
+				$('#' + players[p].divID + ' .player-name').prop('onclick', null).off('click');
+				$('#' + players[p].divID + ' .player-name').unbind('mouseout mouseover');
+			}
+			
+			// Toasty?
+			if (players[p].state == 'dead' && config.eToasty) {
+				eToasty = eToasty + 1;
+				funcToasty(true);
+			}
 		}
 		players.sort(function(a, b) {
 			return a.dps - b.dps;
@@ -358,15 +418,14 @@ function update(rawdata) {
 		// Animation
 		for (let d in players) {
 			// Animate
-			var lbOffset = 0;
-			if (lbExists) lbOffset = 1;
 			var valid24 = false;
 			if (config.layoutVertical && d > 7) {
 				valid24 = true;
 			} else if (!config.layoutVertical && d < (players.length - 8)) {
 				valid24 = true;
 			}
-			if (valid24 && raid24 && players[d].role != 'limit break') {
+			
+			if (valid24 && raid24) {
 				animateDiv24(players[d], d, theme);
 			} else {
 				animateDiv(players[d], d, theme);
@@ -414,6 +473,7 @@ function update(rawdata) {
 	}
 }
 
+// Helper functions
 function changeMainGraph(gData, lData) {
 	// Clear the graph and create a new one
 	graphCanvas.clear();
@@ -476,11 +536,15 @@ function changeMainGraph(gData, lData) {
 	}*/
 }
 
-function inArrayKey(array, key, value) {
+function inArrayKey(array, key, value, mode) {
 	try{
 		for (var i = 0; i < array.length; i++) {
 			if (array[i][key] === value) {
-				return array[i];
+				if (mode) {
+					return array[i];
+				} else {
+					return i;
+				}
 			}
 		}
 	}catch(error) {
@@ -498,8 +562,19 @@ function sortByKey(array, key) {
 	}).reverse();
 }
 
-function createDebugPlayer() {
-	var debugPlayer = new Player({name:'Debug Dummy' + players.length, Job:'debug'}, config);
+function insertAndShift(arr, at, to) {
+    let cutOut = arr.splice(at, 1)[0];
+    arr.splice(to, 0, cutOut);
+}
+
+function createDebugPlayer(mode) {
+	var dname = 'Debug Dummy';
+	var djob = 'gnb';
+	if (mode) {
+		dname = 'Limit Break';
+		djob = '';
+	}
+	var debugPlayer = new Player({name:dname, Job:djob}, config);
 	debugPlayer.divID = players.length;
 	debugPlayer.divRGBA = config.defaultRGBA;
 	debugPlayer.divRGBA_ = config.defaultRGBA_;
@@ -564,12 +639,21 @@ function createDiv(player, theme) {
 		eleHTML += '<span class="player-stat deaths" style="left: 70%; bottom: 1; margin-left: 3px;">' + player.deaths + '</span>';
 		eleHTML += '<span class="player-stat maxhit" style="right: 0; bottom: 1; margin-right: 5px; text-align: right;">' + player.maxhit + '<br />' + player.maxhitnum + '</span>';
 		eleHTML += '<div class="player-dps-bar"></div>';
+		
+		eleHTML += '<div class="tooltip">';
+		eleHTML += '<span class="tt-name">' + player.dispname + '</span>';
+		eleHTML += '<p class="tt-stat tt-maxhit" style="margin-top: 5px;">???' + player.maxhit + '<br />' + player.maxhitnum + '0</p>';
+		eleHTML += '<span class="tt-stat tt-crit" style="position: absolute; bottom: 5; left: 5;">' + player.crit + '</span>';
+		eleHTML += '<span class="tt-stat tt-dhit" style="position: absolute; bottom: 5; left: 30%;">' + player.dhit + '</span>';
+		eleHTML += '<span class="tt-stat tt-critdhit" style="position: absolute; bottom: 5; right: 30%;">' + player.critdhit + '</span>';
+		eleHTML += '<span class="tt-stat tt-deaths" style="position: absolute; bottom: 5; right: 5;">' + player.deaths + '</span>';
+		eleHTML += '</div>';
 
 		newEle.innerHTML = eleHTML;
 
 		document.getElementById('main').appendChild(newEle);
 		
-		if (config.enableGraph && player.role != 'limit break') {
+		if (config.enableGraph && player.role != 'limit break' && !raid24) {
 			$('#' + player.divID + ' .player-name').click(function(){ 
 				changeMainGraph(player.dpsGraph.slice(), player.dpsLabel.slice());
 				currentTrack = player.name;
@@ -585,10 +669,12 @@ function createDiv(player, theme) {
 		$('#'+player.divID).click(function(){ 
 			//player.displaymaxhit = true;
 			//player.displaycrit = true;
-			//player.state = 'dead';
+			player.state = 'dead';
 			//changeMainGraph(player.dpsGraph, player.dpsLabel);
 			//currentTrack = player.name;
-			//createDebugPlayer();
+			createDebugPlayer(false);
+			//eToasty = 5;
+			//funcToasty();
 		});
 	}
 }
@@ -614,6 +700,11 @@ function animateDiv(player, d, theme) {
 			eleA.style.top = 'auto';
 			eleA.style.bottom = 'auto';
 			
+			$('#' + player.divID + ' .player-class-img').css('right', '30%');
+			$('#' + player.divID + ' .player-class-img').css('top', '-5');
+			$('#' + player.divID + ' .player-class-img').css('width', '45px');
+			$('#' + player.divID + ' .player-class-img').css('height', '45px');
+			
 			if (config.playerFill) {
 				eleA.style.width = '100%';
 			} else {
@@ -629,6 +720,7 @@ function animateDiv(player, d, theme) {
 			// Restyle
 			$('#' + player.divID + ' .player-dps-base').removeClass('player-dps-base-24');
 			$('#' + player.divID + ' .player-name').removeClass('player-name-24');
+			$('#' + player.divID + ' .tooltip').removeClass('tt-hover');
 			
 			// Change name
 			$('#' + player.divID + ' .player-name').text(player.dispname);
@@ -759,9 +851,9 @@ function animateDiv(player, d, theme) {
 			
 			if (config.deathBlood) {
 				for (let i = 0; i < 3; i++) {
-					var num = Math.floor(Math.random() * ele.clientWidth);
+					var num = Math.floor(Math.random() * eleA.clientWidth);
 					var numw = Math.floor(Math.random() * (60 - 5 + 1) + 5);
-					var numh = Math.floor(Math.random() * (ele.clientHeight - 5 + 1) + 5);
+					var numh = Math.floor(Math.random() * (eleA.clientHeight - 5 + 1) + 5);
 					let splat = document.createElement('div');
 					splat.setAttribute('id', player.divID + num + Date.now());
 					splat.setAttribute('class', 'bloodsplat');
@@ -804,7 +896,7 @@ function animateDiv(player, d, theme) {
 		var raidOffset = parseInt(d);
 		
 		if (raid24 && config.layoutVertical) {
-			// nothing
+			// do nothing
 		} else if (raid24 && !config.layoutVertical) {
 			if (players.length > 16) {
 				raidOffset = parseInt(d) - (players.length - 9) + 1;
@@ -911,11 +1003,18 @@ function animateDiv24(player, d, theme) {
 		// Restyle
 		$('#' + player.divID + ' .player-dps-base').addClass('player-dps-base-24');
 		$('#' + player.divID + ' .player-name').addClass('player-name-24');
+		if (config.enableTooltip24) {
+			$('#' + player.divID + ' .tooltip').addClass('tt-hover');
+		}
 		if (config.layoutHorizontal) {
 			$('#' + player.divID + ' .player-dps-bar').css('left', '0');
 		} else {
 			$('#' + player.divID + ' .player-dps-bar').css('right', '0');
 		}
+		$('#' + player.divID + ' .player-class-img').css('right', '0');
+		$('#' + player.divID + ' .player-class-img').css('top', '0');
+		$('#' + player.divID + ' .player-class-img').css('width', '30px');
+		$('#' + player.divID + ' .player-class-img').css('height', '30px');
 		
 		// Change name
 		$('#' + player.divID + ' .player-name').text(player.name2);
@@ -927,6 +1026,13 @@ function animateDiv24(player, d, theme) {
 	var dpsbarwidth = (parseFloat(player.dps)/topDamage) * 100;
 	$('#' + player.divID + ' .player-dps-bar').width(dpsbarwidth + '%');
 	$('#' + player.divID + ' .player-dps-base').text(player.dpsbase);
+	if (config.enableTooltip24) {
+		$('#' + player.divID + ' .tt-crit').text(player.crit);
+		$('#' + player.divID + ' .tt-dhit').text(player.dhit);
+		$('#' + player.divID + ' .tt-critdhit').text(player.critdhit);
+		$('#' + player.divID + ' .tt-deaths').text(player.deaths);
+		$('#' + player.divID + ' .tt-maxhit').html(player.maxhit + '<br />' + player.maxhitnum);
+	}
 	
 	// Beyond 8, containers are moved instantly and are not animated
 	
