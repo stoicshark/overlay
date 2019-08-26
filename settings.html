@@ -7,11 +7,13 @@
 	<link rel="stylesheet" href="resources/bootstrap.css" />
 	<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/css/bootstrap4-toggle.min.css" rel="stylesheet" />
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 	<link rel="stylesheet" href="resources/spectrum.css" />
 	<script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
 	<script src="lib/bootstrap.min.js" type="text/javascript"></script>
 	<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/js/bootstrap4-toggle.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/bootstrap-slider.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.10/dist/js/bootstrap-select.min.js"></script>
 	<script src="lib/spectrum.js" type="text/javascript"></script>
 	<script src="lib/config.js" type="text/javascript"></script>
 	<script src="lib/parse.js" type="text/javascript"></script>
@@ -80,7 +82,7 @@
 			font-size: 14px;
         }
 		
-		#content-half {
+		.content-half {
             position: absolute;
 			top: 39px;
             left: calc(50% - 10px);
@@ -108,10 +110,12 @@
     <ul>
         <li><a class="active" href="#home"><strong>Settings</strong></a></li>
         <li class="item"><a href="#" onclick="return show('general');">General</a></li>
+		<li class="item"><a href="#" onclick="return show('graph');">Graph</a></li>
 		<li class="item"><a href="#" onclick="return show('colors');">Colors</a></li>
         <li class="item"><a href="#" onclick="return show('layout');">Layout</a></li>
 		<li class="item"><a href="#" onclick="return show('effects');">Effects</a></li>
 		<li class="item"><a href="#" onclick="return show('savedata');">Save Data</a></li>
+		<li class="item"><a href="#" onclick="return show('secret');" style="color: #f1f1f1;">???</a></li>
 		<div style="position: absolute; bottom: 10px; text-align: center; width: 100%;">
 			<a class="btn btn-info" href="#" role="button" onclick="save();"><strong>Save</strong></a>
 		</div>
@@ -127,7 +131,16 @@
         <div id="general">
             <h3>General</h3>
 			<div class="alert alert-secondary" role="alert">
-				<h5 class="alert-heading">Appearance</h5>
+				<h5 class="alert-heading">Appearance and Behavior</h5>
+				<input id="enableRaid24" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable detection of 24 man raids
+				<br /><br />
+				<input id="enableTooltip24" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable tooltips on hover for those not in top 8 during 24 man raids
+				<br /><br />
+				<input id="showLb" type="checkbox" data-toggle="toggle" data-size="sm">
+				Show Limit breaks in a player bar
+				<br /><br />
 				<input id="graphFill" type="checkbox" data-toggle="toggle" data-size="sm">
 				Stretch graph and information bar to fill the window
 				<br /><br />
@@ -140,17 +153,58 @@
 				<input id="hideMenu" type="checkbox" data-toggle="toggle" data-size="sm">
 				Hide menu icons when in combat
 			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Player</h5>
+				<input id="enableYouColor" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable unique colors for your player bar
+				<br /><br />
+				<input id="detectYou" type="text" width="100px" data-toggle="toggle" data-size="sm">
+				 Your player name as sent by ACT (Usually "YOU")
+				<br /><br />
+				<input id="overrideYou" type="text" width="100px" data-toggle="toggle" data-size="sm">
+				 ACT player name override (ie. "John Smith")
+			</div>
+        </div>
+		<div id="graph" style="display:none">
+            <h3>Graph</h3>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Appearance and Behavior</h5>
+				<input id="enableGraph" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable the DPS graph
+				<br /><br />
+				<select id="graphTrack">
+					<option>Yourself</option>
+					<option>Total DPS</option>
+				</select>
+				Default tracking target (Start of Encounters)
+				<br /><br />
+				<div style="text-align: center">
+					Graph update tick rate: <span id="graphTickValue"></span><br />
+					<input id="graphTick" type="text" />
+				</div>
+				<div class="alert alert-warning" role="alert">
+					Lower tick rates are more accurate but may impact performance.
+				</div>
+				<input id="enableGraph24" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable collecting DPS data for graphs during 24 man raids 
+				<br /><br />
+				<div class="alert alert-warning" role="alert">
+					Enabling graph data collection for 24 players may heavily impact performance. While disabled and in a 24 man raid, the dps graph will only collect data for yourself and the total raid.
+				</div>
+			</div>
         </div>
 		<div id="colors" style="display:none">
             <h3>Colors</h3>
 			<div class="alert alert-secondary" role="alert">
 				<h5 class="alert-heading">Player Colors</h5>
+				<input type='text' id="youRGBA" /> <input type='text' id="youRGBA_" /> Self bar colors<br /><br />
 				<input type='text' id="dpsRGBA" /> <input type='text' id="dpsRGBA_" /> DPS bar colors<br /><br />
 				<input type='text' id="tankRGBA" /> <input type='text' id="tankRGBA_" /> Tank bar colors<br /><br />
 				<input type='text' id="healerRGBA" /> <input type='text' id="healerRGBA_" /> Healer bar colors<br /><br />
 				<input type='text' id="limitRGBA" /> <input type='text' id="limitRGBA_" /> Limitbreak bar colors<br /><br />
 				<input type='text' id="defaultRGBA" /> <input type='text' id="defaultRGBA_" /> Default bar colors<br /><br />
-				<div id="content-half">
+				<div class="content-half">
+					<input type='text' id="youRGBA__" /> Self accent color<br /><br />
 					<input type='text' id="dpsRGBA__" /> DPS accent color<br /><br />
 					<input type='text' id="tankRGBA__" /> Tank accent color<br /><br />
 					<input type='text' id="healerRGBA__" /> Healer accent color<br /><br />
@@ -163,14 +217,14 @@
 				</div>
 				<hr>
 				<input type='text' id="playerTextColor" /> Player text color
-				<div id="content-half" style="top: 370px">
+				<div class="content-half" style="top: 420px">
 					<input type='text' id="playerDPSColor" /> DPS text color
 				</div>
 			</div>
 			<div class="alert alert-secondary" role="alert">
 				<h5 class="alert-heading">Information Colors</h5>
 				<input type='text' id="infoColor" /> Information container color<br /><br />
-				<div id="content-half">
+				<div class="content-half">
 					<input type='text' id="infoTextColor" /> Information text color<br /><br />
 				</div>
 				<div style="text-align: center">
@@ -182,7 +236,7 @@
 				<h5 class="alert-heading">Graph Colors</h5>
 				<input type='text' id="graphColor" /> Graph container color<br /><br />
 				<input type='text' id="graphTextColor" /> Graph text color<br /><br />
-				<div id="content-half">
+				<div class="content-half">
 					<input type='text' id="graphLineColor" /> Graph line color<br /><br />
 					<input type='text' id="graphFillColor" /> Graph fill color<br /><br />
 				</div>
@@ -257,6 +311,15 @@
 				</div>
 			</div>
 		</div>
+		<div id="secret" style="display:none">
+            <h3>???</h3>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">???</h5>
+				<input id="eToasty" type="checkbox" data-toggle="toggle" data-size="sm">
+				Toasty!
+				<br /><br />
+			</div>
+        </div>
 		<div id="save-display" style="display:none">
 			<h3>Save Data</h3>
 			<div class="alert alert-success" style="text-align: center" role="alert">
@@ -276,16 +339,19 @@
 		// Colors
 		var colorID = [
 			// Player colors
+			['youRGBA', true, 'playerAlpha'],
 			['dpsRGBA', true, 'playerAlpha'],
 			['tankRGBA', true, 'playerAlpha'],
 			['healerRGBA', true, 'playerAlpha'],
 			['limitRGBA', true, 'playerAlpha'],
 			['defaultRGBA', true, 'playerAlpha'],
+			['youRGBA_', true, 'playerAlpha'],
 			['dpsRGBA_', true, 'playerAlpha'],
 			['tankRGBA_', true, 'playerAlpha'],
 			['healerRGBA_', true, 'playerAlpha'],
 			['limitRGBA_', true, 'playerAlpha'],
 			['defaultRGBA_', true, 'playerAlpha'],
+			['youRGBA__', true, 'playerAlpha'],
 			['dpsRGBA__', true, 'playerAlpha'],
 			['tankRGBA__', true, 'playerAlpha'],
 			['healerRGBA__', true, 'playerAlpha'],
@@ -304,10 +370,33 @@
 		// Read and reflect configuration settings
 		
 		// General
+		if (oconfig.enableRaid24) $("#enableRaid24").prop('checked', true);
+		if (oconfig.enableTooltip24) $("#enableTooltip24").prop('checked', true);
+		if (oconfig.showLb) $("#showLb").prop('checked', true);
 		if (oconfig.graphFill) $("#graphFill").prop('checked', true);
 		if (oconfig.playerFill) $("#playerFill").prop('checked', true);
 		if (oconfig.hideMenu) $("#hideMenu").prop('checked', true);
+		if (oconfig.enableYouColor) $("#enableYouColor").prop('checked', true);
+		$("#detectYou").val(oconfig.detectYou);
+		$("#overrideYou").val(oconfig.overrideYou);
 		
+		// Graph
+		if (oconfig.enableGraph) $("#enableGraph").prop('checked', true);
+		if (oconfig.enableGraph24) $("#enableGraph24").prop('checked', true);
+		$('select option:contains("' + oconfig.graphTrack + '")').prop('selected',true);
+		
+		$("#graphTick").bootstrapSlider({ // graphTick
+			value: oconfig.graphTick,
+			step: 1,
+			min: 1,
+			max: 5
+		});
+		$("#graphTickValue").text(oconfig.graphTick);
+		$("#graphTick").on("slide", function(e) {
+			$("#graphTickValue").text(e.value);
+		});
+		
+		// Create color inputs
 		for (var cid in colorID) {
 			$('#' + colorID[cid][0] + '').spectrum({
 				color:  rgbaConvert(oconfig[colorID[cid][0]], false),
@@ -372,6 +461,9 @@
 		if (oconfig.deathColor) $("#deathColor").prop('checked', true);
 		if (oconfig.deathShake) $("#deathShake").prop('checked', true);
 		if (oconfig.deathBlood) $("#deathBlood").prop('checked', true);
+		
+		// ???
+		if (oconfig.eToasty) $("#eToasty").prop('checked', true);
 			
         function show(shown) {
             hideAll();
@@ -382,10 +474,12 @@
 		
         function hideAll() {
             document.getElementById('general').style.display = 'none';
+			document.getElementById('graph').style.display = 'none';
 			document.getElementById('colors').style.display = 'none';
             document.getElementById('layout').style.display = 'none';
             document.getElementById('effects').style.display = 'none';
             document.getElementById('savedata').style.display = 'none';
+			document.getElementById('secret').style.display = 'none';
 			document.getElementById('save-display').style.display = 'none';
 			document.getElementById('reset-display').style.display = 'none';
             return false;
@@ -395,9 +489,21 @@
 			hideAll();
 			
 			// General
+			oconfig.enableRaid24 = $('#enableRaid24').prop('checked');
+			oconfig.enableTooltip24 = $('#enableTooltip24').prop('checked');
+			oconfig.showLb = $('#showLb').prop('checked');
 			oconfig.graphFill = $('#graphFill').prop('checked');
 			oconfig.playerFill = $('#playerFill').prop('checked');
 			oconfig.hideMenu = $('#hideMenu').prop('checked');
+			oconfig.enableYouColor = $('#enableYouColor').prop('checked');
+			oconfig.detectYou = $("#detectYou").val();
+			oconfig.overrideYou = $("#overrideYou").val();
+			
+			// Graph
+			oconfig.enableGraph = $('#enableGraph').prop('checked');
+			oconfig.enableGraph24 = $('#enableGraph24').prop('checked');
+			oconfig.graphTick = $('#graphTick').bootstrapSlider('getValue');
+			oconfig.graphTrack = $( "#graphTrack option:selected" ).text();
 			
 			// Colors
 			oconfig.playerAlpha = $('#playerAlpha').bootstrapSlider('getValue');
@@ -421,6 +527,9 @@
 			oconfig.deathColor = $('#deathColor').prop('checked');
 			oconfig.deathShake = $('#deathShake').prop('checked');
 			oconfig.deathBlood = $('#deathBlood').prop('checked');
+			
+			// ???
+			oconfig.eToasty = $('#eToasty').prop('checked');
 			
 			var newConfig = new Config();
 			newConfig.update(oconfig);
