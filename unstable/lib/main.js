@@ -666,7 +666,7 @@ function createDiv(player, theme) {
 		}
 
 		/*Debug*/
-		$('#'+player.divID).click(function(){ 
+		/*$('#'+player.divID).click(function(){ 
 			//player.displaymaxhit = true;
 			//player.displaycrit = true;
 			player.state = 'dead';
@@ -675,7 +675,7 @@ function createDiv(player, theme) {
 			createDebugPlayer(false);
 			//eToasty = 5;
 			//funcToasty();
-		});
+		});*/
 	}
 }
 
