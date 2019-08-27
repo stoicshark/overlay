@@ -322,6 +322,10 @@ function update(rawdata) {
 		if (config.graphTrack == 'Yourself') {
 			currentTrack = config.detectYou;
 		}
+		
+		// ???
+		eToasty = 0;
+		clearInterval(eToastyTimer);
 	}
 	
 	//if (true) {
