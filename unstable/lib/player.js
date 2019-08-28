@@ -59,10 +59,17 @@ Player.prototype.update = function (data) {
 			var d = data[player];
 			if (!isNaN(d['encdps'])) {
 				this.dps = d['encdps'];
-				//this.dpsGraph.push(parseFloat(this.dps));
 				var dpsarr = this.dps.split(".");
-				this.dpsbase = dpsarr[0];
-				this.dpsdec = dpsarr[1];
+				if (!isNaN(dpsarr[0])) {
+					this.dpsbase = dpsarr[0];
+				} else {
+					this.dpsbase = 0;
+				}
+				if (!isNaN(dpsarr[1])) {
+					this.dpsdec = dpsarr[1];
+				} else {
+					this.dpsdec = '00';
+				}
 			}
 			
 			this.crit = d['crithit%'];
