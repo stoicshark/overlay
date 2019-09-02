@@ -15,8 +15,9 @@ canvas{
 body, html {
 	margin: 0;
 	overflow: hidden;
-	background: none;
+	background: transparent;
 	-webkit-user-select: none;
+	transform-origin: bottom right;
 }
 
 #menu {

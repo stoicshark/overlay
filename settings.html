@@ -152,6 +152,14 @@
 				</div>
 				<input id="hideMenu" type="checkbox" data-toggle="toggle" data-size="sm">
 				Hide menu icons when in combat
+				<hr>
+				<div style="text-align: center">
+					Overlay zoom: <span id="overlayZoomValue"></span><br />
+					<input id="overlayZoom" type="text" />
+				</div>
+				<div class="alert alert-warning" role="alert">
+					Experimental, this zooms in or out the entire overlay. May have unintended side effects such as misaligning graphical elements or fonts.
+				</div>
 			</div>
 			<div class="alert alert-secondary" role="alert">
 				<h5 class="alert-heading">Player</h5>
@@ -380,6 +388,17 @@
 		$("#detectYou").val(oconfig.detectYou);
 		$("#overrideYou").val(oconfig.overrideYou);
 		
+		$("#overlayZoom").bootstrapSlider({ // overlayValue
+			value: oconfig.overlayZoom,
+			step: 0.05,
+			min: 0.85,
+			max: 1.20
+		});
+		$("#overlayZoomValue").text(Math.round(((oconfig.overlayZoom - 0.80)/0.05) * 25.00) + '%');
+		$("#overlayZoom").on("slide", function(e) {
+			$("#overlayZoomValue").text(Math.round(((e.value - 0.80)/0.05) * 25.00) + '%');
+		});
+		
 		// Graph
 		if (oconfig.enableGraph) $("#enableGraph").prop('checked', true);
 		if (oconfig.enableGraph24) $("#enableGraph24").prop('checked', true);
@@ -495,6 +514,7 @@
 			oconfig.graphFill = $('#graphFill').prop('checked');
 			oconfig.playerFill = $('#playerFill').prop('checked');
 			oconfig.hideMenu = $('#hideMenu').prop('checked');
+			oconfig.overlayZoom = $('#overlayZoom').bootstrapSlider('getValue');
 			oconfig.enableYouColor = $('#enableYouColor').prop('checked');
 			oconfig.detectYou = $("#detectYou").val();
 			oconfig.overrideYou = $("#overrideYou").val();
