@@ -1,11 +1,16 @@
 @font-face{ 
-	font-family: 'voltage';
-	src: url(voltage.woff);
+	font-family: 'bebaskai';
+	src: url(bebaskai.woff);
 }
 
 @font-face{ 
 	font-family: 'aeromatics';
 	src: url(aeromatics.woff);
+}
+
+@font-face{ 
+	font-family: 'boycott';
+	src: url(boycott.woff);
 }
 
 canvas{
@@ -17,7 +22,8 @@ body, html {
 	overflow: hidden;
 	background: transparent;
 	-webkit-user-select: none;
-	transform-origin: bottom right;
+	text-rendering: optimizeLegibility;
+	text-shadow: -1px 0 1px #333, 0 1px 1px #333, 1px 0 1px #333, 0 -1px 1px #333;
 }
 
 #menu {
@@ -30,13 +36,12 @@ body, html {
 
 #more {
 	text-align: center;
-	margin-top: -15px;
-	margin-left: 4px;
-	font-family: "voltage";
-	font-size: 80px;
-	line-height: 12px;
+	margin-top: -13px;
+	margin-left: 0px;
+	font-family: "bebaskai";
+	font-size: 65px;
+	line-height: 13px;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 #graph-html {
@@ -47,7 +52,6 @@ body, html {
 	font-family: "aeromatics";
 	font-size: 15px;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 #graph-cont {
@@ -72,7 +76,6 @@ body, html {
 	font-family: "aeromatics";
 	font-size: 12px;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 .span-absolute {
@@ -95,7 +98,6 @@ body, html {
 	padding: 5px;
 	height: calc(100% - 250px);
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 	overflow-y: scroll;
 }
 
@@ -118,15 +120,14 @@ body, html {
 .playerdiv {
 	position: absolute;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 .player-name {
 	position: absolute;
-	top: -1;
+	top: -2;
 	left: 25%;
 	text-align: left;
-	font-family: "voltage";
+	font-family: "bebaskai";
 	letter-spacing: 1px;
 	font-size: 17px;
 }
@@ -134,10 +135,10 @@ body, html {
 .player-name-24 {
 	position: absolute;
 	width: 100%;
-	top: -1;
+	top: -2;
 	left: 0;
 	text-align: center;
-	font-family: "voltage";
+	font-family: "bebaskai";
 	letter-spacing: 1px;
 	font-size: 17px;
 }
@@ -146,8 +147,8 @@ body, html {
 	position: relative;
 	width: 25%;
 	left: 5;
-	top: 1;
-	font-family: "voltage";
+	top: -1;
+	font-family: "bebaskai";
 	text-align: right;
 	font-size: 28px;
 	overflow: hidden;
@@ -167,8 +168,8 @@ body, html {
 .player-dps-dec {
 	position: relative;
 	right: -5;
-	top: 1;
-	font-family: "voltage";
+	top: -1;
+	font-family: "bebaskai";
 	font-size: 20px;
 }
 
@@ -207,8 +208,8 @@ body, html {
 .player-side-popup {
 	position: absolute;
 	text-align: center;
-	font-family: "voltage";
-	font-size: 21px;
+	font-family: "boycott";
+	font-size: 16px;
 	white-space: nowrap;
 }
 
@@ -249,7 +250,7 @@ body, html {
 }
 
 .tt-name {
-	font-family: "voltage";
+	font-family: "bebaskai";
 	letter-spacing: 1px;
 	font-size: 17px;
 }
