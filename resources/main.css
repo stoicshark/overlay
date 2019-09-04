@@ -22,6 +22,7 @@ body, html {
 	overflow: hidden;
 	background: transparent;
 	-webkit-user-select: none;
+	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
 	text-shadow: -1px 0 1px #333, 0 1px 1px #333, 1px 0 1px #333, 0 -1px 1px #333;
 }
@@ -146,8 +147,8 @@ body, html {
 .player-dps-base {
 	position: relative;
 	width: 25%;
-	left: 5;
-	top: -1;
+	left: 3;
+	top: -2;
 	font-family: "bebaskai";
 	text-align: right;
 	font-size: 28px;
@@ -167,8 +168,8 @@ body, html {
 
 .player-dps-dec {
 	position: relative;
-	right: -5;
-	top: -1;
+	right: -3;
+	top: -2;
 	font-family: "bebaskai";
 	font-size: 20px;
 }
