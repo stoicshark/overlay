@@ -69,7 +69,7 @@ body, html {
 	height: 15px;
 	width: 100%;
 	font-family: "aeromatics";
-	font-size: 12px;
+	font-size: 1em;
 	color: white;
 	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
