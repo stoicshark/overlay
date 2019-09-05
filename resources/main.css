@@ -50,6 +50,42 @@ body, html {
 	height: 50px;
 }
 
+#tooltip {
+	position: absolute;
+	left: 50%;
+	top: 2.5px;
+	visibility: hidden;
+	width: 250px;
+	height: 45px;
+	margin-left: -125px;
+	border-radius: 7px;
+	z-index: 1;
+}
+
+.tt-icon {
+	position: absolute;
+	height: 45px;
+	width: 250px;
+	color: white;
+	opacity: 0.6;
+	font-family: "parseicons";
+	font-size: 45px;
+	text-shadow: none;
+	text-align: center;
+}
+
+.tt-name {
+	position: absolute;
+	font-family: "bebaskai";
+	font-size: 17px;
+}
+
+.tt-stat {
+	position: absolute;
+	font-family: "oswald";
+	font-size: 12px;
+}
+
 #more {
 	text-align: center;
 	margin-top: -13px;
@@ -231,7 +267,7 @@ body, html {
 	top: -5;
 	width: 45px;
 	height: 45px;
-	opacity: .6;
+	opacity: 0.6;
 	font-family: "parseicons";
 	font-size: 45px;
 	color: white;
@@ -263,38 +299,6 @@ body, html {
 	-ms-filter: blur(5px);
 	filter: blur(5px);
 	background-color: #fff;
-}
-
-.tooltip {
-	position: fixed;
-	margin:0 auto;
-	left:50%;
-	top:50%;
-	visibility: hidden;
-	background: rgba(100,100,100,0.9);
-	width: 200px;
-	height: 70px;
-	margin-left: -105px;
-	margin-top: -40px;
-	padding: 5px;
-	text-align: center;
-	border-radius: 7px;
-	z-index: 1;
-}
-
-.tt-name {
-	font-family: "bebaskai";
-	letter-spacing: 1px;
-	font-size: 17px;
-}
-
-.tt-stat {
-	font-family: "oswald-light";
-	font-size: 12px;
-}
-
-.playerdiv:hover .tooltip.tt-hover {
-  visibility: visible;
 }
 
 #toasty {

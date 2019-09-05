@@ -253,6 +253,17 @@
 					<input id="graphAlpha" type="text" />
 				</div>
 			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Tooltip Colors</h5>
+				<input type='text' id="tooltipColor" /> Tooltip container color<br /><br />
+				<div class="content-half">
+					<input type='text' id="tooltipTextColor" /> Tooltip text color<br /><br />
+				</div>
+				<div style="text-align: center">
+					Tooltip container opacity: <span id="tooltipAlphaValue"></span><br />
+					<input id="tooltipAlpha" type="text" />
+				</div>
+			</div>
         </div>
 		<div id="layout" style="display:none">
             <h3>Layout</h3>
@@ -372,7 +383,9 @@
 			['graphColor', true , 'graphAlpha'],
 			['graphLineColor', true, 'graphAlpha'],
 			['graphFillColor', true, 'graphAlpha'],
-			['graphTextColor', false, '']
+			['graphTextColor', false, ''],
+			['tooltipColor', true, 'tooltipAlpha'],
+			['tooltipTextColor', false, '']
 		];
 		
 		// Read and reflect configuration settings
@@ -462,6 +475,17 @@
 			$("#graphAlphaValue").text((e.value * 100) + '%');
 		});
 		
+		$("#tooltipAlpha").bootstrapSlider({ // tooltipAlpha
+			value: oconfig.tooltipAlpha,
+			step: 0.1,
+			min: 0,
+			max: 1
+		});
+		$("#tooltipAlphaValue").text((oconfig.tooltipAlpha * 100) + '%');
+		$("#tooltipAlpha").on("slide", function(e) {
+			$("#tooltipAlphaValue").text((e.value * 100) + '%');
+		});
+		
 		// Layout
 		if (oconfig.layoutVertical) {
 			$('#layoutVerticalTop').button('toggle');
@@ -529,6 +553,7 @@
 			oconfig.playerAlpha = $('#playerAlpha').bootstrapSlider('getValue');
 			oconfig.infoAlpha = $('#infoAlpha').bootstrapSlider('getValue');
 			oconfig.graphAlpha = $('#graphAlpha').bootstrapSlider('getValue');
+			oconfig.tooltipAlpha = $('#tooltipAlpha').bootstrapSlider('getValue');
 			for (var cid in colorID) {
 				if (colorID[cid][1]) {
 					oconfig[colorID[cid][0]] = rgbaConvert($('#' + colorID[cid][0] + '').spectrum("get").toRgbString(), oconfig[colorID[cid][2]]);
