@@ -1,11 +1,31 @@
 @font-face{ 
+	font-family: 'bebaskai';
+	src: url(bebaskai.woff);
+}
+
+@font-face{ 
 	font-family: 'voltage';
 	src: url(voltage.woff);
 }
 
 @font-face{ 
-	font-family: 'aeromatics';
-	src: url(aeromatics.woff);
+	font-family: 'oswald-light';
+	src: url(oswald-light.woff);
+}
+
+@font-face{ 
+	font-family: 'oswald';
+	src: url(oswald.woff);
+}
+
+@font-face{ 
+	font-family: 'boycott';
+	src: url(boycott.woff);
+}
+
+@font-face{ 
+	font-family: 'parseicons';
+	src: url(parseicons.woff);
 }
 
 canvas{
@@ -15,8 +35,11 @@ canvas{
 body, html {
 	margin: 0;
 	overflow: hidden;
-	background: none;
+	background: transparent;
 	-webkit-user-select: none;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	text-shadow: -1px 0 1px #333, 0 1px 1px #333, 1px 0 1px #333, 0 -1px 1px #333;
 }
 
 #menu {
@@ -27,15 +50,50 @@ body, html {
 	height: 50px;
 }
 
+#tooltip {
+	position: absolute;
+	left: 50%;
+	top: 2.5px;
+	visibility: hidden;
+	width: 250px;
+	height: 45px;
+	margin-left: -125px;
+	border-radius: 7px;
+	z-index: 1;
+}
+
+.tt-icon {
+	position: absolute;
+	height: 45px;
+	width: 250px;
+	color: white;
+	opacity: 0.6;
+	font-family: "parseicons";
+	font-size: 45px;
+	text-shadow: none;
+	text-align: center;
+}
+
+.tt-name {
+	position: absolute;
+	font-family: "bebaskai";
+	font-size: 17px;
+}
+
+.tt-stat {
+	position: absolute;
+	font-family: "oswald";
+	font-size: 12px;
+}
+
 #more {
 	text-align: center;
-	margin-top: -15px;
-	margin-left: 4px;
-	font-family: "voltage";
-	font-size: 80px;
-	line-height: 12px;
+	margin-top: -13px;
+	margin-left: 0px;
+	font-family: "bebaskai";
+	font-size: 65px;
+	line-height: 13px;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 #graph-html {
@@ -43,10 +101,10 @@ body, html {
 	width: calc(100% - 26px);
 	right: 0;
 	height: 50px;
-	font-family: "aeromatics";
-	font-size: 15px;
+	font-family: "oswald";
+	letter-spacing: 0.2px;
+	font-size: 12px;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 #graph-cont {
@@ -68,10 +126,10 @@ body, html {
 	position: absolute;
 	height: 15px;
 	width: 100%;
-	font-family: "aeromatics";
-	font-size: 1em;
+	font-family: "oswald";
+	font-size: 10px;
+	line-height: 14px;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 .span-absolute {
@@ -89,12 +147,11 @@ body, html {
 #updates-html {
 	position: absolute;
 	background-color: rgba(0, 0 ,0 , .3);
-	font-family: "aeromatics";
+	font-family: "oswald-light";
 	font-size: 13px;
 	padding: 5px;
 	height: calc(100% - 250px);
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 	overflow-y: scroll;
 }
 
@@ -117,26 +174,24 @@ body, html {
 .playerdiv {
 	position: absolute;
 	color: white;
-	text-shadow: -1px 0 2px #333, 0 1px 2px #333, 1px 0 2px #333, 0 -1px 2px #333;
 }
 
 .player-name {
 	position: absolute;
-	top: -1;
+	top: -2;
 	left: 25%;
 	text-align: left;
-	font-family: "voltage";
-	letter-spacing: 1px;
+	font-family: "bebaskai";
 	font-size: 17px;
 }
 
 .player-name-24 {
 	position: absolute;
 	width: 100%;
-	top: -1;
+	top: -2;
 	left: 0;
 	text-align: center;
-	font-family: "voltage";
+	font-family: "bebaskai";
 	letter-spacing: 1px;
 	font-size: 17px;
 }
@@ -156,8 +211,8 @@ body, html {
 	position: absolute;
 	width: 100%;
 	left: 0;
-	top: 15;
-	font-family: "aeromatics";
+	top: 13;
+	font-family: "oswald";
 	text-align: center;
 	font-size: 12px;
 	overflow: hidden;
@@ -173,8 +228,10 @@ body, html {
 
 .player-stat {
 	position: absolute;
-	font-family: "aeromatics";
-	font-size: 12px;
+	font-family: "oswald";
+	letter-spacing: 0.2px;
+	line-height: 13px;
+	font-size: 11px;
 }
 
 .player-dps-bar {
@@ -203,11 +260,25 @@ body, html {
 	background-size: 100% 100%;
 }
 
+.player-class-icon {
+	position: absolute;
+	transform: rotate(10deg);
+	right: 30%;
+	top: -5;
+	width: 45px;
+	height: 45px;
+	opacity: 0.6;
+	font-family: "parseicons";
+	font-size: 45px;
+	color: white;
+	text-shadow: none;
+}
+
 .player-side-popup {
 	position: absolute;
 	text-align: center;
-	font-family: "voltage";
-	font-size: 21px;
+	font-family: "boycott";
+	font-size: 15px;
 	white-space: nowrap;
 }
 
@@ -228,39 +299,6 @@ body, html {
 	-ms-filter: blur(5px);
 	filter: blur(5px);
 	background-color: #fff;
-}
-
-.tooltip {
-	position: fixed;
-	margin:0 auto;
-	left:50%;
-	top:50%;
-	visibility: hidden;
-	background: rgba(100,100,100,0.9);
-	width: 200px;
-	height: 70px;
-	margin-left: -105px;
-	margin-top: -40px;
-	padding: 5px;
-	text-align: center;
-	border-radius: 7px;
-	transform: none;
-	z-index: 1;
-}
-
-.tt-name {
-	font-family: "voltage";
-	letter-spacing: 1px;
-	font-size: 17px;
-}
-
-.tt-stat {
-	font-family: "aeromatics";
-	font-size: 12px;
-}
-
-.playerdiv:hover .tooltip.tt-hover {
-  visibility: visible;
 }
 
 #toasty {

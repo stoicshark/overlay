@@ -25,14 +25,19 @@ function Config() {
 	// Info container color
 	this.infoAlpha = '0.3';
 	this.infoColor = 'rgba(0, 0, 0, 0.3)';
-	this.infoTextColor = 'rgba(255, 255, 255)';
+	this.infoTextColor = 'rgb(255, 255, 255)';
 	
 	// Graph container color
 	this.graphAlpha = '0.3';
 	this.graphColor = 'rgba(0, 0, 0, 0.3)';
 	this.graphLineColor = 'rgba(0, 0, 0, 0.3)';
 	this.graphFillColor = 'rgba(255, 255, 255, 0.3)';
-	this.graphTextColor =  'rgba(255, 255, 255)';
+	this.graphTextColor =  'rgb(255, 255, 255)';
+	
+	// Tooltip container color
+	this.tooltipAlpha = '0.9';
+	this.tooltipColor = 'rgba(50, 50, 50, 0.9)';
+	this.tooltipTextColor = 'rgb(255, 255, 255)';
 	
 	// General/Style settings
 	this.enableRaid24 = true;
@@ -41,6 +46,7 @@ function Config() {
 	this.playerFill = false;
 	this.graphFill = true;
 	this.hideMenu = true;
+	this.overlayZoom = 1.00;
 	this.enableYouColor = false;
 	this.detectYou = 'YOU';
 	this.overrideYou = 'YOU';
@@ -99,12 +105,17 @@ Config.prototype.update = function (d) {
 	if (typeof d.graphFillColor !== 'undefined') this.graphFillColor = d.graphFillColor;
 	if (typeof d.graphTextColor !== 'undefined') this.graphTextColor = d.graphTextColor;
 	
+	if (typeof d.tooltipAlpha !== 'undefined') this.tooltipAlpha = d.tooltipAlpha;
+	if (typeof d.tooltipColor !== 'undefined') this.tooltipColor = d.tooltipColor;
+	if (typeof d.tooltipTextColor !== 'undefined') this.tooltipTextColor = d.tooltipTextColor;
+	
 	if (typeof d.enableRaid24 !== 'undefined') this.enableRaid24 = d.enableRaid24;
 	if (typeof d.enableTooltip24 !== 'undefined') this.enableTooltip24 = d.enableTooltip24;
 	if (typeof d.showLb !== 'undefined') this.showLb = d.showLb;
 	if (typeof d.playerFill !== 'undefined') this.playerFill = d.playerFill;
 	if (typeof d.graphFill !== 'undefined') this.graphFill = d.graphFill;
 	if (typeof d.hideMenu !== 'undefined') this.hideMenu = d.hideMenu;
+	if (typeof d.overlayZoom !== 'undefined') this.overlayZoom = d.overlayZoom;
 	if (typeof d.enableYouColor !== 'undefined') this.enableYouColor = d.enableYouColor;
 	if (typeof d.detectYou !== 'undefined') this.detectYou = d.detectYou;
 	if (typeof d.overrideYou !== 'undefined') this.overrideYou = d.overrideYou;

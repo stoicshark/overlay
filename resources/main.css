@@ -23,11 +23,6 @@
 	src: url(boycott.woff);
 }
 
-@font-face{ 
-	font-family: 'parseicons';
-	src: url(parseicons.woff);
-}
-
 canvas{
 	margin: 0 auto;
 }
@@ -48,6 +43,37 @@ body, html {
 	left: 0;
 	width: 24px;
 	height: 50px;
+}
+
+#dropdown {
+	position: absolute;
+	visibility: hidden;
+	display: inline-block;
+	left: 0;
+	margin-top: -41px;
+	background-color: #444;
+	border: 2px solid #999;	
+	z-index: 100;
+}
+
+#dropdown a {
+	display: block;
+	font-family: "oswald";
+	font-size: 15px;
+	padding: 5px;
+	color: #fff;
+	letter-spacing: 0.7px;
+	white-space: nowrap;
+	text-decoration: none;
+	text-shadow: none;
+}
+
+#dropdown a:hover {
+	background-color: #777;
+}
+
+.show-dropdown {
+	visibility: visible !important;
 }
 
 #tooltip {
@@ -121,7 +147,7 @@ body, html {
 	height: 50px;
 }
 
-#legend {
+#information {
 	background-color: rgba(0,0,0,.3);
 	position: absolute;
 	height: 15px;
@@ -301,6 +327,67 @@ body, html {
 	background-color: #fff;
 }
 
+/* Slim */
+.player-dps-slim {
+	position: absolute;
+	bottom: 3px;
+	font-family: "voltage";
+	line-height: 13px;
+	font-size: 20px;
+}
+
+.player-name-slim {
+	position: absolute;
+	bottom: 0px;
+	text-align: left;
+	font-family: "bebaskai";
+	font-size: 15px;
+}
+
+.player-icon-slim {
+	position: absolute;
+	right: 3;
+	bottom: 1;
+}
+
+.bloodsplat-slim {
+	width: 20px;
+	height: 20px;
+	box-shadow: 0px 100px 15px 0px #f00;
+	position: absolute;
+	opacity: 0.5;
+	top: -100px;
+}
+
+.player-side-popup-slim {
+	position: absolute;
+	text-align: center;
+	font-family: "bebaskai";
+	font-size: 15px;
+	line-height: 15px;
+	white-space: nowrap;
+}
+
+.player-dps-slim-24 {
+	position: absolute;
+	left: 1px;
+	letter-spacing: 0.2px;
+	font-size: 16px;
+	overflow: hidden;
+}
+
+.player-icon-slim-24 {
+	right: 1px;
+	opacity: 0.6;
+}
+
+.player-name-slim-24 {
+	left: 0 !important;
+	width: 100%;
+	height: 100%;
+}
+
+/* Extra */
 #toasty {
 	position: absolute;
 	bottom: 0;

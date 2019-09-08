@@ -8,16 +8,17 @@
 	<meta name="googlebot" content="noindex, nofollow"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<link rel="stylesheet" href="resources/main.css" />
+	<link rel="stylesheet" href="resources/parseicons.css" />
 	<script src="lib/jquery-3.4.1.min.js" type="text/javascript"></script>
 	<script src="lib/chart.bundle.min.js" type="text/javascript"></script>
-	<script src="lib/TweenMax.min.js" type="text/javascript"></script>
+	<script src="lib/anime.min.js" type="text/javascript"></script>
 	<script src="lib/config.js" type="text/javascript"></script>
 	<script src="lib/parse.js" type="text/javascript"></script>
 	<script src="lib/player.js" type="text/javascript"></script>
 	<audio id="toasty-ogg"><source src="resources/toasty.ogg" type="audio/ogg"></audio>
 </head>
 <body>
-	<div id="legend">
+	<div id="information">
 	</div>
 	<div id="header">
 		<div id="graph-cont">	
@@ -29,11 +30,30 @@
 		</div>
 		<div id="menu">
 			<p id="more">.<br />.<br />.</p>
+			<div id="dropdown">
+				<a href="#" onclick="return quickMenu('settings');"><span class="icon-cog" style="padding-right: 5px"></span>Settings</a>
+			</div>
 		</div>
 	</div>
 	<div id="main">
 	</div>
 	<div id="updates-html">
+		<span style="font-family: bebaskai; font-size: 20px;">rev.20</span><br />
+		- Under-the-hood tightening of the codebase<br />
+		- Animation and performance rewrite, no longer using GSAP<br />
+		- Updated and cleaned up Settings, now with less technical jargon<br />
+		- Style framework, Layout is now Style in Settings<br />
+		- Default/original style is now: Skye<br />
+		- New style added: Slim<br />
+		- The Settings button is now a Quick Menu<br />
+		- Settings added to Quick Menu<br />
+		- Fixed maxhits effect being off center when animated<br />
+		- Fixed crit effects not taking horizontal alignment into account<br />
+		- Fixed various instances where effects may have been choppy (?)<br />
+		- Fixed various instances where animations may have been choppy (?)<br />
+		- Fixed an instance where player bars wouldn't instantiate<br />
+		- Fixed various misaligned offsets<br />
+		- Expect hotfixes over the next few days as issues arise<br />
 		<span style="font-family: bebaskai; font-size: 20px;">rev.19</span><br />
 		- Class icons changed to be vector based<br />
 		- Tooltips reworked, now moved to overlay over the graphing area<br />

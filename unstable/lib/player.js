@@ -32,6 +32,7 @@ function Player(data , dconfig) {
 	this.divID = 0;
 	this.divRGBA = "";
 	this.role = Player.getRole(this.name, this.job);
+	this.icon = Player.getIcon(this.name, this.job);
 	this.top8 = true;
 	this.owner = "";
 	
@@ -175,4 +176,97 @@ Player.getRole = function (name, job) {
 	if (name.indexOf("(") > -1) return "pet";
 	if (name == "Limit Break") return "limit break";
 	return "none";
+}
+
+Player.getIcon = function (name, job) {
+	var icon = '';
+	switch (job) {
+		// DPS
+		case 'pgl':
+			icon = '&#xe911;';
+			break;
+		case 'mnk':
+			icon = '&#xe90e;';
+			break;
+		case 'lnc':
+			icon = '&#xe90c;';
+			break;
+		case 'drg':
+			icon = '&#xe908;';
+			break;
+		case 'arc':
+			icon = '&#xe901;';
+			break;
+		case 'brd':
+			icon = '&#xe905;';
+			break;
+		case 'rog':
+			icon = '&#xe914;';
+			break;
+		case 'nin':
+			icon = '&#xe910;';
+			break;
+		case 'acn':
+			icon = '&#xe900;';
+			break;
+		case 'smn':
+			icon = '&#xe917;';
+			break;
+		case 'thm':
+			icon = '&#xe918;';
+			break;
+		case 'blm':
+			icon = '&#xe903;';
+			break;
+		case 'mch':
+			icon = '&#xe90d;';
+			break;
+		case 'rdm':
+			icon = '&#xe913;';
+			break;
+		case 'sam':
+			icon = '&#xe915;';
+			break;
+		case 'blu':
+			icon = '&#xe904;';
+			break;
+		case 'dnc':
+			icon = '&#xe907;';
+			break;
+		// Tank
+		case 'gla':
+			icon = '&#xe90a;';
+			break;
+		case 'pld':
+			icon = '&#xe912;';
+			break;
+		case 'mrd':
+			icon = '&#xe90f;';
+			break;
+		case 'war':
+			icon = '&#xe919;';
+			break;
+		case 'drk':
+			icon = '&#xe909;';
+			break;
+		case 'gnb':
+			icon = '&#xe90b;';
+			break;		
+		// Healer
+		case 'cnj':
+			icon = '&#xe906;';
+			break;
+		case 'whm':
+			icon = '&#xe91a;';
+			break;
+		case 'sch':
+			icon = '&#xe916;';
+			break;
+		case 'ast':
+			icon = '&#xe902;';
+			break;
+		default:
+			icon = '';
+	}
+	return icon;
 }

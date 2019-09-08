@@ -111,8 +111,8 @@
         <li><a class="active" href="#home"><strong>Settings</strong></a></li>
         <li class="item"><a href="#" onclick="return show('general');">General</a></li>
 		<li class="item"><a href="#" onclick="return show('graph');">Graph</a></li>
+		<li class="item"><a href="#" onclick="return show('style');">Style</a></li>
 		<li class="item"><a href="#" onclick="return show('colors');">Colors</a></li>
-        <li class="item"><a href="#" onclick="return show('layout');">Layout</a></li>
 		<li class="item"><a href="#" onclick="return show('effects');">Effects</a></li>
 		<li class="item"><a href="#" onclick="return show('savedata');">Save Data</a></li>
 		<li class="item"><a href="#" onclick="return show('secret');" style="color: #f1f1f1;">???</a></li>
@@ -132,34 +132,37 @@
             <h3>General</h3>
 			<div class="alert alert-secondary" role="alert">
 				<h5 class="alert-heading">Appearance and Behavior</h5>
-				<input id="enableRaid24" type="checkbox" data-toggle="toggle" data-size="sm">
-				Enable detection of 24 man raids
-				<br /><br />
-				<input id="enableTooltip24" type="checkbox" data-toggle="toggle" data-size="sm">
-				Enable tooltips on hover for those not in top 8 during 24 man raids
-				<br /><br />
 				<input id="showLb" type="checkbox" data-toggle="toggle" data-size="sm">
 				Show Limit breaks
 				<br /><br />
 				<input id="graphFill" type="checkbox" data-toggle="toggle" data-size="sm">
-				Stretch graph and information bar to fill the window
+				Stretch graph and information bars full width
 				<br /><br />
 				<input id="playerFill" type="checkbox" data-toggle="toggle" data-size="sm">
-				Stretch player bars to fill the window
+				Stretch player bars to full width
 				<br /><br />
 				<div class="alert alert-warning" role="alert">
-					Stretching the player bars will disable max hit pop ups
+					Stretching player bars to full width will disable max hit pop ups
 				</div>
 				<input id="hideMenu" type="checkbox" data-toggle="toggle" data-size="sm">
-				Hide menu icons when in combat
+				Hide quick menu button when in combat
 				<hr>
 				<div style="text-align: center">
 					Overlay zoom: <span id="overlayZoomValue"></span><br />
-					<input id="overlayZoom" type="text" />
+					<input id="overlayZoom" type="text" /><br />
 				</div>
 				<div class="alert alert-warning" role="alert">
 					Experimental, this zooms in or out the entire overlay. May have unintended side effects such as misaligning graphical elements or fonts.
 				</div>
+			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Raids</h5>
+				<input id="enableRaid24" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable auto-detection of 24 man raids
+				<br /><br />
+				<input id="enableTooltip24" type="checkbox" data-toggle="toggle" data-size="sm">
+				Enable tooltips on hover for those not in top 8 during 24 man raids
+				<br /><br />
 			</div>
 			<div class="alert alert-secondary" role="alert">
 				<h5 class="alert-heading">Player</h5>
@@ -187,17 +190,55 @@
 				Default tracking target (Start of Encounters)
 				<br /><br />
 				<div style="text-align: center">
-					Graph update tick rate: <span id="graphTickValue"></span><br />
+					Graph update rate: <span id="graphTickValue"></span><br />
 					<input id="graphTick" type="text" />
 				</div>
 				<div class="alert alert-warning" role="alert">
-					Lower tick rates are more accurate but may impact performance.
+					Lower update rates are more accurate but may impact performance.
 				</div>
 				<input id="enableGraph24" type="checkbox" data-toggle="toggle" data-size="sm">
-				Enable collecting DPS data for graphs during 24 man raids 
+				Enable collecting graph data for everyone during 24 man raids 
 				<br /><br />
 				<div class="alert alert-warning" role="alert">
-					Enabling graph data collection for 24 players may heavily impact performance. While disabled and in a 24 man raid, the dps graph will only collect data for yourself and the total raid.
+					Enabling graph data collection for 24 players may heavily impact performance. While disabled and during a 24 man raid, the dps graph will only collect data for yourself and the total raid.
+				</div>
+			</div>
+        </div>
+		<div id="style" style="display:none">
+            <h3>Style</h3>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Overlay Style</h5>
+				<div style="text-align: center">
+					<select id="theme">
+						<option>Skye</option>
+						<option>Slim</option>
+					</select>
+				</div>
+				<br />
+				<div class="alert alert-warning" role="alert">
+					Certain styles use colors differently. Customize accordingly.
+				</div>
+			</div>
+			<div class="alert alert-secondary" role="alert">
+				<h5 class="alert-heading">Overlay Orientation</h5>
+				<div style="text-align: center">
+					<div class="btn-group btn-group-toggle btn-group-lg" data-toggle="buttons">
+						<label  id="layoutVerticalTop" class="btn btn-secondary">
+							<input type="radio" name="layoutVertical" value="true">Top
+						</label>
+						<label  id="layoutVerticalBottom" class="btn btn-secondary">
+							<input type="radio" name="layoutVertical" value="false">Bottom
+						</label>
+					</div>
+					<br /><br />
+					<div class="btn-group btn-group-toggle btn-group-lg" data-toggle="buttons">
+						<label  id="layoutHorizontalLeft" class="btn btn-secondary">
+							<input type="radio" name="layoutHorizontal" value="true">Left
+						</label>
+						<label  id="layoutHorizontalRight" class="btn btn-secondary">
+							<input type="radio" name="layoutHorizontal" value="false">Right
+						</label>
+					</div>
 				</div>
 			</div>
         </div>
@@ -265,44 +306,15 @@
 				</div>
 			</div>
         </div>
-		<div id="layout" style="display:none">
-            <h3>Layout</h3>
-			<div class="alert alert-secondary" role="alert">
-				<h5 class="alert-heading">Vertical Orientation</h5>
-				<div style="text-align: center">
-					<div class="btn-group btn-group-toggle btn-group-lg" data-toggle="buttons">
-						<label  id="layoutVerticalTop" class="btn btn-secondary">
-							<input type="radio" name="layoutVertical" value="true">Top
-						</label>
-						<label  id="layoutVerticalBottom" class="btn btn-secondary">
-							<input type="radio" name="layoutVertical" value="false">Bottom
-						</label>
-					</div>
-				</div>
-			</div>
-			<div class="alert alert-secondary" role="alert">
-				<h5 class="alert-heading">Horizontal Orientation</h5>
-				<div style="text-align: center">
-					<div class="btn-group btn-group-toggle btn-group-lg" data-toggle="buttons">
-						<label  id="layoutHorizontalLeft" class="btn btn-secondary">
-							<input type="radio" name="layoutHorizontal" value="true">Left
-						</label>
-						<label  id="layoutHorizontalRight" class="btn btn-secondary">
-							<input type="radio" name="layoutHorizontal" value="false">Right
-						</label>
-					</div>
-				</div>
-			</div>
-        </div>
 		<div id="effects" style="display:none">
             <h3>Effects</h3>
 			<div class="alert alert-secondary" role="alert">
 				<h5 class="alert-heading">General Effects</h5>
 				<input id="showMaxhits" type="checkbox" data-toggle="toggle" data-size="sm">
-				Show max hit pop ups
+				Show max hit pop-ups
 				<br /><br />
 				<input id="critBlip" type="checkbox" data-toggle="toggle" data-size="sm">
-				Show critical hit blips on playerbars
+				Show critical hit effect on player bars
 			</div>
 			<div class="alert alert-secondary" role="alert">
 				<h5 class="alert-heading">Death Effects</h5>
@@ -486,7 +498,8 @@
 			$("#tooltipAlphaValue").text((e.value * 100) + '%');
 		});
 		
-		// Layout
+		// Style
+		$('select option:contains("' + oconfig.style + '")').prop('selected',true);
 		if (oconfig.layoutVertical) {
 			$('#layoutVerticalTop').button('toggle');
 		} else {
@@ -519,7 +532,7 @@
             document.getElementById('general').style.display = 'none';
 			document.getElementById('graph').style.display = 'none';
 			document.getElementById('colors').style.display = 'none';
-            document.getElementById('layout').style.display = 'none';
+            document.getElementById('style').style.display = 'none';
             document.getElementById('effects').style.display = 'none';
             document.getElementById('savedata').style.display = 'none';
 			document.getElementById('secret').style.display = 'none';
@@ -547,7 +560,7 @@
 			oconfig.enableGraph = $('#enableGraph').prop('checked');
 			oconfig.enableGraph24 = $('#enableGraph24').prop('checked');
 			oconfig.graphTick = $('#graphTick').bootstrapSlider('getValue');
-			oconfig.graphTrack = $( "#graphTrack option:selected" ).text();
+			oconfig.graphTrack = $('#graphTrack option:selected').text();
 			
 			// Colors
 			oconfig.playerAlpha = $('#playerAlpha').bootstrapSlider('getValue');
@@ -562,7 +575,8 @@
 				}
 			}
 			
-			// Layout
+			// Theme
+			oconfig.style = $('#style option:selected').text();
 			oconfig.layoutVertical = $('input[name="layoutVertical"]:checked').val() == 'true';
 			oconfig.layoutHorizontal = $('input[name="layoutHorizontal"]:checked').val() == 'true';
 			
