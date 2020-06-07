@@ -14,6 +14,7 @@ function Player(data , dconfig) {
 	this.dpsdec = "00";
 	this.dpspct = "0%";
 	this.dpsbar = "0%";
+	this.damage = 0;
 	this.crit = "0%";
 	this.dhit = "0%";
 	this.critdhit = "0%";
@@ -32,9 +33,11 @@ function Player(data , dconfig) {
 	this.divID = 0;
 	this.divRGBA = "";
 	this.role = Player.getRole(this.name, this.job);
-	this.icon = Player.getIcon(this.name, this.job);
+	this.jobname = Player.getJobName(this.job, this.role);
 	this.top8 = true;
 	this.owner = "";
+	this.hps = 0;
+	this.healed = 0;
 	
 	if (this.role == 'pet') {
 		var petname = this.dispname.split(" (");
@@ -60,6 +63,7 @@ Player.prototype.update = function (data) {
 			var d = data[player];
 			if (!isNaN(d['encdps'])) {
 				this.dps = d['encdps'];
+				this.damage = d['damage'];
 				var dpsarr = this.dps.split(".");
 				if (!isNaN(dpsarr[0])) {
 					this.dpsbase = dpsarr[0];
@@ -73,6 +77,9 @@ Player.prototype.update = function (data) {
 				}
 			}
 			
+			if (!isNaN(d['ENCHPS'])) this.hps = d['ENCHPS'];
+			if (!isNaN(d['healed'])) this.healed = d['healed'];
+			
 			this.crit = d['crithit%'];
 			this.dhit = d['DirectHitPct'];
 			this.critdhit = d['CritDirectHitPct'];
@@ -80,7 +87,7 @@ Player.prototype.update = function (data) {
 			// Has there been a death?
 			if (parseInt(d['deaths']) > this.deaths) {
 				this.deaths = d['deaths'];
-				this.state = "dead";
+				if (this.state == 'alive') this.state = 'dead';
 			}
 			
 			// Has there been more crits?
@@ -101,6 +108,7 @@ Player.prototype.update = function (data) {
 				this.dpsTick = this.dpsTick + 1;
 			}
 			
+			//###############
 			var shortenMaxhit = [
 				// Shorten some ability names
 				["Midare Setsugekka", "Mid. Setsugekka"],
@@ -110,20 +118,15 @@ Player.prototype.update = function (data) {
 				["Spineshatter Dive", "Spine. Dive"],
 				["Refulgent Arrow", "Ref. Arrow"],
 				["Enchanted Redoublement", "E. Redoublement"],
+				["Heated Split Shot", "H. Split Shot"],
+				["Heated Slug Shot", "H. Slug Shot"],
+				["Heated Clean Shot", "H. Clean Shot"],
 				["Single Technical Finish", "1x Tech. Finish"],
 				["Double Technical Finish", "2x Tech. Finish"],
 				["Triple Technical Finish", "3x Tech. Finish"],
 				["Quadruple Technical Finish", "4x Tech. Finish"],
 				["Single Standard Finish", "1x Stnd. Finish"],
 				["Double Standard Finish", "2x Stnd. Finish"],
-				// Trust abilities
-				["Fire Iv Of The Seventh Dawn", "Fire IV (OtSD)"],
-				["Blizzard Of The Seventh Dawn", "Blizzard (OtSD)"],
-				["Blizzard Iv Of The Seventh Dawn", "Blizzard IV (OtSD)"],
-				["Aero Of The Seventh Dawn", "Aero (OtSD)"],
-				["Foul Of The Seventh Dawn", "Foul (OtSD)"],
-				["Gravity Of The Seventh Dawn", "Gravity (OtSD)"],
-				["Thunder Of The Seventh Dawn", "Thunder (OtSD)"],
 				["", ""]
 			];
 			
@@ -178,95 +181,56 @@ Player.getRole = function (name, job) {
 	return "none";
 }
 
-Player.getIcon = function (name, job) {
-	var icon = '';
-	switch (job) {
-		// DPS
-		case 'pgl':
-			icon = '&#xe911;';
-			break;
-		case 'mnk':
-			icon = '&#xe90e;';
-			break;
-		case 'lnc':
-			icon = '&#xe90c;';
-			break;
-		case 'drg':
-			icon = '&#xe908;';
-			break;
-		case 'arc':
-			icon = '&#xe901;';
-			break;
-		case 'brd':
-			icon = '&#xe905;';
-			break;
-		case 'rog':
-			icon = '&#xe914;';
-			break;
-		case 'nin':
-			icon = '&#xe910;';
-			break;
-		case 'acn':
-			icon = '&#xe900;';
-			break;
-		case 'smn':
-			icon = '&#xe917;';
-			break;
-		case 'thm':
-			icon = '&#xe918;';
-			break;
-		case 'blm':
-			icon = '&#xe903;';
-			break;
-		case 'mch':
-			icon = '&#xe90d;';
-			break;
-		case 'rdm':
-			icon = '&#xe913;';
-			break;
-		case 'sam':
-			icon = '&#xe915;';
-			break;
-		case 'blu':
-			icon = '&#xe904;';
-			break;
-		case 'dnc':
-			icon = '&#xe907;';
-			break;
-		// Tank
-		case 'gla':
-			icon = '&#xe90a;';
-			break;
-		case 'pld':
-			icon = '&#xe912;';
-			break;
-		case 'mrd':
-			icon = '&#xe90f;';
-			break;
-		case 'war':
-			icon = '&#xe919;';
-			break;
-		case 'drk':
-			icon = '&#xe909;';
-			break;
-		case 'gnb':
-			icon = '&#xe90b;';
-			break;		
-		// Healer
-		case 'cnj':
-			icon = '&#xe906;';
-			break;
-		case 'whm':
-			icon = '&#xe91a;';
-			break;
-		case 'sch':
-			icon = '&#xe916;';
-			break;
-		case 'ast':
-			icon = '&#xe902;';
-			break;
-		default:
-			icon = '';
+Player.getJobName = function (job, role) {
+	var jobnames = [
+		["pgl","pugilist"],
+		["mnk","monk"],
+		["lnc","lancer"],
+		["drg","dragoon"],
+		["arc","archer"],
+		["brd","bard"],
+		["rog","rogue"],
+		["nin","ninja"],
+		["acn","arcanist"],
+		["smn","summoner"],
+		["thm","thaumaturge"],
+		["blm","black mage"],
+		["mch","machinist"],
+		["rdm","red mage"],
+		["sam","samurai"],
+		["blu","blue mage"],
+		["dnc","dancer"],
+		["gla","gladiator"],
+		["pld","paladin"],
+		["mrd","marauder"],
+		["war","warrior"],
+		["drk","dark knight"],
+		["gnb","gunbreaker"],
+		["cnj","conjurer"],
+		["whm","white mage"],
+		["sch","scholar"],
+		["ast","astrologian"],
+	];
+	if (job !== "") {
+		for (var j in jobnames) {
+			if (jobnames[j][0] == job) {
+				return jobnames[j][1];
+			}
+		}
+	} else {
+		if (role == 'pet') {
+			return 'chocobo'; 
+		}
+		if (role == 'limit break') {
+			return 'limit break'; 
+		}
 	}
-	return icon;
+	return "";
 }
+
+
+
+
+
+
+

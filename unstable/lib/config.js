@@ -57,7 +57,8 @@ function Config() {
 	this.graphTick = 3;
 	this.graphTrack = 'Yourself';
 	
-	// Layout settings
+	// Style settings
+	this.style = 'Skye';
 	this.layoutVertical = true;
 	this.layoutHorizontal = true;
 	
@@ -125,6 +126,7 @@ Config.prototype.update = function (d) {
 	if (typeof d.graphTick !== 'undefined') this.graphTick = d.graphTick;
 	if (typeof d.graphTrack !== 'undefined') this.graphTrack = d.graphTrack;
 	
+	if (typeof d.style !== 'undefined') this.style = d.style;
 	if (typeof d.layoutVertical !== 'undefined') this.layoutVertical = d.layoutVertical;
 	if (typeof d.layoutHorizontal !== 'undefined') this.layoutHorizontal = d.layoutHorizontal;
 	

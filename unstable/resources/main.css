@@ -24,8 +24,8 @@
 }
 
 @font-face{ 
-	font-family: 'parseicons';
-	src: url(parseicons.woff);
+	font-family: 'regen';
+	src: url(regen.woff);
 }
 
 canvas{
@@ -48,6 +48,37 @@ body, html {
 	left: 0;
 	width: 24px;
 	height: 50px;
+}
+
+#dropdown {
+	position: absolute;
+	visibility: hidden;
+	display: inline-block;
+	left: 0;
+	margin-top: -41px;
+	background-color: #444;
+	border: 2px solid #999;	
+	z-index: 100;
+}
+
+#dropdown a {
+	display: block;
+	font-family: "oswald";
+	font-size: 15px;
+	padding: 5px;
+	color: #fff;
+	letter-spacing: 0.7px;
+	white-space: nowrap;
+	text-decoration: none;
+	text-shadow: none;
+}
+
+#dropdown a:hover {
+	background-color: #777;
+}
+
+.show-dropdown {
+	visibility: visible !important;
 }
 
 #tooltip {
@@ -121,7 +152,7 @@ body, html {
 	height: 50px;
 }
 
-#legend {
+#information {
 	background-color: rgba(0,0,0,.3);
 	position: absolute;
 	height: 15px;
@@ -301,6 +332,232 @@ body, html {
 	background-color: #fff;
 }
 
+/* Slim */
+.player-dps-slim {
+	position: absolute;
+	bottom: 3px;
+	font-family: "voltage";
+	line-height: 13px;
+	font-size: 20px;
+}
+
+.player-name-slim {
+	position: absolute;
+	bottom: 0px;
+	text-align: left;
+	font-family: "bebaskai";
+	font-size: 15px;
+}
+
+.player-icon-slim {
+	position: absolute;
+	right: 3;
+	bottom: 1;
+}
+
+.bloodsplat-slim {
+	width: 20px;
+	height: 20px;
+	box-shadow: 0px 100px 15px 0px #f00;
+	position: absolute;
+	opacity: 0.5;
+	top: -100px;
+}
+
+.player-side-popup-slim {
+	position: absolute;
+	text-align: center;
+	font-family: "bebaskai";
+	font-size: 15px;
+	line-height: 15px;
+	white-space: nowrap;
+}
+
+.player-dps-slim-24 {
+	position: absolute;
+	left: 1px;
+	letter-spacing: 0.2px;
+	font-size: 16px;
+	overflow: hidden;
+}
+
+.player-icon-slim-24 {
+	right: 1px;
+	opacity: 0.6;
+}
+
+.player-name-slim-24 {
+	left: 0 !important;
+	width: 100%;
+	height: 100%;
+}
+
+/* Result Screen */
+#result-cont {
+	position: absolute;
+	width: 400px;
+	height: 400px;
+	top: calc(50% - 200px);
+	left: calc(50% - 200px);
+	z-index: 1000;
+}
+
+#result-s-block {
+	position: absolute;
+	width: 400px;
+	height: 400px;
+	border-radius: 20px;
+	background-color: rgba(100,100,200,0.8);
+}
+
+#result-screen-cont {
+	position: absolute;
+	width: 400px;
+	height: 400px;
+}
+
+.result-block {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	background-color: rgba(100,100,200,0.8);
+}
+
+.result-ec-title {
+	position: absolute;
+	font-family: "regen";
+	opacity: 0;
+	font-size: 36px;
+	color: white;
+	z-index: 1500;
+}
+
+.result-title {
+	position: absolute;
+	right: 50%;
+	transform: translate(50%);
+	font-family: "regen";
+	font-size: 25px;
+	color: white;
+	top: 10;
+	white-space: nowrap;
+	opacity: 0;
+}
+
+.result-player-cont {
+	position: absolute;
+	width: 250px;
+	height: 150px;
+	white-space: nowrap;
+	opacity: 0;
+}
+
+.result-player-cont-sm {
+	position: absolute;
+	white-space: nowrap;
+	bottom: 20;
+	right: 50%;
+	transform: translate(50%);
+	width: 300px;
+	opacity: 0;
+}
+
+.result-player-icon-sm {
+	position: absolute;
+	top: -1;
+	right: 0;
+	font-size: 22px;
+	color: rgba(255, 255, 255, 0.4);
+	text-align: center;
+	text-shadow: none;
+}
+
+.result-player-rank-sm {
+	position: absolute;
+	font-family: "voltage";
+	left: 1;
+	font-size: 20px;
+	color: white;
+}
+
+.result-player-name-sm {
+	position: absolute;
+	font-family: "bebaskai";
+	left: 25;
+	font-size: 18px;
+	color: white;
+}
+
+.result-player-num-sm {
+	position: absolute;
+	font-family: "voltage";
+	top: 1;
+	right: 30;
+	font-size: 20px;
+	color: white;
+}
+
+.result-player-icon {
+	position: absolute;
+	right: 50%;
+	transform: translate(50%);
+	font-size: 150px;
+	color: white;
+	text-align: center;
+	text-shadow: none;
+}
+
+.result-center-cont {
+	position: absolute;
+	right: 50%;
+	transform: translate(50%);
+	text-align: center;
+}
+
+.result-player-name {
+	font-family: "bebaskai";
+	font-size: 25px;
+	color: white;
+}
+
+.result-namejob-hr {
+	 margin: 0 auto;
+	width: 90%;
+	height: 2px;
+	margin-top: -2px;
+	margin-bottom: -1px;
+	background: white;
+	border: 1px solid;
+	border-color: #333;
+}
+
+.result-player-job {
+	font-family: "oswald-light";
+	font-size: 14px;
+	color: white;
+}
+
+.result-player-num {
+	position: absolute;
+	font-family: "voltage";
+	bottom: 20%;
+	font-size: 40px;
+	color: white;
+	right: 50%;
+	transform: translate(50%);
+}
+
+.result-player-num2 {
+	position: absolute;
+	font-family: "voltage";
+	bottom: 10%;
+	font-size: 21px;
+	color: white;
+	right: 50%;
+	transform: translate(50%);
+}
+
+/* Extra */
 #toasty {
 	position: absolute;
 	bottom: 0;
