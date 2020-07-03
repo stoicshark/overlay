@@ -68,13 +68,6 @@ function Config() {
 	this.deathShake = true;
 	this.deathBlood = true;
 	this.critBlip = true;
-	this.enableResultsScreen = false; // Results Screen sub-effect settings
-	this.resultsScreenList = [
-			'top dps',
-			'top hps',
-			'top maxhit',
-			'top deaths'
-		];
 	
 	// Easter Eggs
 	this.eToasty = false;
@@ -142,8 +135,6 @@ Config.prototype.update = function (d) {
 	if (typeof d.deathShake !== 'undefined') this.deathShake = d.deathShake;
 	if (typeof d.deathBlood !== 'undefined') this.deathBlood = d.deathBlood;
 	if (typeof d.critBlip !== 'undefined') this.critBlip = d.critBlip;
-	if (typeof d.enableResultsScreen !== 'undefined') this.enableResultsScreen = d.enableResultsScreen;
-	if (typeof d.resultsScreenList !== 'undefined') this.resultsScreenList = d.resultsScreenList;
 	
 	if (typeof d.eToasty !== 'undefined') this.eToasty = d.eToasty;
 	

@@ -503,8 +503,8 @@ function update(rawdata) {
 		// Save the last data snapshot
 		encounter.data = data;
 		
-		// Show results screen?
-		if (config.enableResultsScreen) {
+		// End result screen
+		if (true) {
 			showResultScreen();
 		}
 	}
@@ -1883,7 +1883,12 @@ function showResultScreen() {
 		resultScreen = resultScreens[resultQueue];
 		
 		// Top type screens
-		var topScreens = config.resultsScreenList;
+		var topScreens = [
+			'top dps',
+			'top hps',
+			'top maxhit',
+			'top deaths'
+		];
 		
 		try {
 			if (topScreens.indexOf(resultScreen) > -1)  rEle.dispatchEvent(rtEvent); // Fire a Top Screen
