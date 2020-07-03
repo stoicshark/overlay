@@ -1920,7 +1920,7 @@ function showResultScreen() {
 				
 		// Sort
 		pdata.sort(function(a, b) {
-			function getPctValue(s) { return s.match(/\d+/) || 0; }
+			function getPctValue(s) { return parseInt(s.replace('%', '')); }
 			if (resultScreen == 'DPS') return a.dps - b.dps;
 			if (resultScreen == 'HPS') return a.hps - b.hps;
 			if (resultScreen == 'Maximum Hit') return a.maxhitnum - b.maxhitnum;
