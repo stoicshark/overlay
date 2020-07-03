@@ -360,6 +360,7 @@
 		<div id="savedata" style="display:none">
 			<h3>Save Data</h3>
 			<div class="alert alert-danger" style="text-align: center" role="alert">
+				<h5 class="alert-heading">Reset</h5>
 				Resets all settings and save data to their defaults.<br /><br />
 				<div class="input-group inline-table">
 					<div class="input-group-append">
@@ -367,6 +368,19 @@
 							<input id="reset" type="checkbox" />
 						</div>
 						<a class="btn btn-danger" href="#" role="button" onclick="reset();"><strong>Reset</strong></a>
+					</div>
+				</div>
+			</div>
+			<div class="alert alert-danger" style="text-align: center" role="alert">
+				<h5 class="alert-heading">Save Debug</h5>
+				Save debugging, I probably wouldn't touch this unless you know what you're doing.<br /><br />
+				<textarea class="form-control" id="saveDebugValue" rows="5"></textarea><br />
+				<div class="input-group inline-table">
+					<div class="input-group-append">
+						<div class="input-group-text">
+							<input id="saveDebug" type="checkbox" />
+						</div>
+						<a class="btn btn-danger" href="#" role="button" onclick="saveDebug();"><strong>Debug</strong></a>
 					</div>
 				</div>
 			</div>
@@ -692,6 +706,7 @@
 			return false;
 		}
 		
+		// Reset
 		function reset() {
 			if (document.getElementById('reset').checked) {
 				hideAll();
@@ -700,6 +715,21 @@
 				localStorage.setItem('config-saved', true);
 				document.getElementById("reset-display").style.display = 'block';
 				document.getElementById('reset').checked = false;
+				location.reload();
+			}
+			return false;
+		}
+		
+		// Save Debug
+		document.getElementById('saveDebugValue').value = JSON.stringify(oconfig);
+		function saveDebug() {
+			if (document.getElementById('saveDebug').checked) {
+				hideAll();
+				//var newConfig = document.getElementById('saveDebugValue').value;
+				localStorage.setItem('config', document.getElementById('saveDebugValue').value);
+				localStorage.setItem('config-saved', true);
+				document.getElementById("reset-display").style.display = 'block';
+				document.getElementById('saveDebug').checked = false;
 				location.reload();
 			}
 			return false;
