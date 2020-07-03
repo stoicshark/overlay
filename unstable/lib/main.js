@@ -1899,7 +1899,7 @@ function showResultScreen() {
 			if (encounter.players[pde].role == 'limit break') continue; // Skip limit breaks
 			pdata.push(encounter.players[pde]);
 		}
-		
+		console.log(resultScreen);
 		// Sort
 		pdata.sort(function(a, b) {
 			if (resultScreen == 'DPS') return a.dps - b.dps;
