@@ -25,6 +25,8 @@ function Player(data , dconfig) {
 	this.displaymaxhit = false;
 	this.displaycrit = false;
 	this.crithits = 0;
+	this.dhits = 0;
+	this.critdhits = 0;
 	this.state = "initialize";
 	this.stopGraph = false;
 	this.dpsGraph = [0];
@@ -38,6 +40,10 @@ function Player(data , dconfig) {
 	this.owner = "";
 	this.hps = 0;
 	this.healed = 0;
+	this.block = "0%";
+	this.parrypct = "0%";
+	this.damagepct = "0%"
+	this.damagetaken = 0;
 	
 	if (this.role == 'pet') {
 		var petname = this.dispname.split(" (");
@@ -83,6 +89,12 @@ Player.prototype.update = function (data) {
 			this.crit = d['crithit%'];
 			this.dhit = d['DirectHitPct'];
 			this.critdhit = d['CritDirectHitPct'];
+			this.dhits = d['DirectHitCount'];
+			this.critdhits = d['CritDirectHitCount'];
+			this.block = d['BlockPct'];
+			this.parrypct = d['ParryPct'];
+			this.damagepct = d['damage%'];
+			this.damagetaken = d['damagetaken'];
 			
 			// Has there been a death?
 			if (parseInt(d['deaths']) > this.deaths) {

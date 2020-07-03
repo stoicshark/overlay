@@ -74,7 +74,13 @@ function Config() {
 			'DPS',
 			'HPS',
 			'Maximum Hit',
-			'Deaths'
+			'Deaths',
+			'Critical%',
+			'Direct Hit%',
+			'Crit Direct Hit%',
+			'Blocked%',
+			'Parried%',
+			'Damage Taken'
 		];
 	
 	// Easter Eggs
