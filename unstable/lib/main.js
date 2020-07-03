@@ -1757,11 +1757,6 @@ function showResultScreen() {
 	// Which result screens to fire off
 	let resultQueue = -1;
 	let resultScreen = '';
-	let resultScreens = [];
-	resultScreens.push('top dps');
-	resultScreens.push('top hps');
-	resultScreens.push('top maxhit');
-	resultScreens.push('top deaths');
 	
 	// Events
 	let rbEvent = new Event('resultsBackgroundEvent'); // Background Anim/Creations
@@ -1877,10 +1872,10 @@ function showResultScreen() {
 		
 		// Queue processing
 		resultQueue++;
-		if (resultQueue > resultScreens.length - 1) {
+		if (resultQueue > config.resultsScreenList.length - 1) {
 			resultQueue = 0;
 		}
-		resultScreen = resultScreens[resultQueue];
+		resultScreen = config.resultsScreenList[resultQueue];
 		
 		// Top type screens
 		var topScreens = config.resultsScreenList;
@@ -1897,29 +1892,29 @@ function showResultScreen() {
 		// local array to store and use player data
 		let pdata = [];
 		for (let pde in encounter.players) {
-			if (resultScreen == 'top dps' && encounter.players[pde].dps == 0) continue;
-			if (resultScreen == 'top hps' && encounter.players[pde].hps == 0) continue;
-			if (resultScreen == 'top maxhit' && encounter.players[pde].maxhitnum == 0) continue;
-			if (resultScreen == 'top deaths' && encounter.players[pde].deaths == 0) continue;
+			if (resultScreen == 'DPS' && encounter.players[pde].dps == 0) continue;
+			if (resultScreen == 'HPS' && encounter.players[pde].hps == 0) continue;
+			if (resultScreen == 'Maximum Hit' && encounter.players[pde].maxhitnum == 0) continue;
+			if (resultScreen == 'Deaths' && encounter.players[pde].deaths == 0) continue;
 			if (encounter.players[pde].role == 'limit break') continue; // Skip limit breaks
 			pdata.push(encounter.players[pde]);
 		}
 		
 		// Sort
 		pdata.sort(function(a, b) {
-			if (resultScreen == 'top dps') return a.dps - b.dps;
-			if (resultScreen == 'top hps') return a.hps - b.hps;
-			if (resultScreen == 'top maxhit') return a.maxhitnum - b.maxhitnum;
-			if (resultScreen == 'top deaths') return a.deaths - b.deaths;
+			if (resultScreen == 'DPS') return a.dps - b.dps;
+			if (resultScreen == 'HPS') return a.hps - b.hps;
+			if (resultScreen == 'Maximum Hit') return a.maxhitnum - b.maxhitnum;
+			if (resultScreen == 'Deaths') return a.deaths - b.deaths;
 		});
 		pdata.reverse();
 		
 		// Screen specific variables
 		let rtitle;
-		if (resultScreen == 'top dps') rtitle = 'top damage (dps)';
-		if (resultScreen == 'top hps') rtitle = 'top healing (hps)';
-		if (resultScreen == 'top maxhit') rtitle = 'top maximum hit';
-		if (resultScreen == 'top deaths') rtitle = 'top deaths';
+		if (resultScreen == 'DPS') rtitle = 'top damage (dps)';
+		if (resultScreen == 'HPS') rtitle = 'top healing (hps)';
+		if (resultScreen == 'Maximum Hit') rtitle = 'top maximum hit';
+		if (resultScreen == 'Deaths') rtitle = 'top deaths';
 		
 		// Make yet another container
 		let rsbEle = document.createElement("div");

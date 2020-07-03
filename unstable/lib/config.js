@@ -70,10 +70,10 @@ function Config() {
 	this.critBlip = true;
 	this.enableResultsScreen = false; // Results Screen sub-effect settings
 	this.resultsScreenList = [
-			'top dps',
-			'top hps',
-			'top maxhit',
-			'top deaths'
+			'DPS',
+			'HPS',
+			'Maximum Hit',
+			'Deaths'
 		];
 	
 	// Easter Eggs
