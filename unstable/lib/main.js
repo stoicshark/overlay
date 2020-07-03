@@ -1920,15 +1920,16 @@ function showResultScreen() {
 				
 		// Sort
 		pdata.sort(function(a, b) {
+			function getPctValue(s) { return s.match(/\d+/) || 0; }
 			if (resultScreen == 'DPS') return a.dps - b.dps;
 			if (resultScreen == 'HPS') return a.hps - b.hps;
 			if (resultScreen == 'Maximum Hit') return a.maxhitnum - b.maxhitnum;
 			if (resultScreen == 'Deaths') return a.deaths - b.deaths;
-			if (resultScreen == 'Critical%') return a.crit - b.crit;
-			if (resultScreen == 'Direct Hit%') return a.dhit - b.dhit;
-			if (resultScreen == 'Crit Direct Hit%') return a.critdhit - b.critdhit;
-			if (resultScreen == 'Blocked%') return a.blockpct - b.blockpct;
-			if (resultScreen == 'Parried%') return a.parrypct - b.parrypct;
+			if (resultScreen == 'Critical%') return getPctValue(a.crit) - getPctValue(b.crit);
+			if (resultScreen == 'Direct Hit%') return getPctValue(a.dhit) - getPctValue(b.dhit);
+			if (resultScreen == 'Crit Direct Hit%') return getPctValue(a.critdhit) - getPctValue(b.critdhit);
+			if (resultScreen == 'Blocked%') return getPctValue(a.blockpct) - getPctValue(b.blockpct);
+			if (resultScreen == 'Parried%') return getPctValue(a.parrypct) - getPctValue(b.parrypct);
 			if (resultScreen == 'Damage Taken') return a.damagetaken - b.damagetaken;
 		});
 		pdata.reverse();
@@ -2159,7 +2160,7 @@ function showResultScreen() {
 					update: function(a) {
 						pEle.getElementsByClassName('result-player-num')[0].innerHTML = a.animations[0].currentValue;
 						pEle.getElementsByClassName('result-player-num2')[0].innerHTML = a.animations[1].currentValue;
-						if (resultScreen == 'Maximum Hit' || resultScreen == 'Deaths' || resultScreen == 'Blocked%' || resultScreen == 'Parried%') {
+						if (resultScreen == 'Maximum Hit' || resultScreen == 'Deaths' || resultScreen == 'Blocked%' || resultScreen == 'Parried%' || resultScreen == 'Damage Taken') {
 							pEle.getElementsByClassName('result-player-num2')[0].innerHTML = rnum2;
 						}
 					}
