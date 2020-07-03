@@ -1899,7 +1899,7 @@ function showResultScreen() {
 			if (encounter.players[pde].role == 'limit break') continue; // Skip limit breaks
 			pdata.push(encounter.players[pde]);
 		}
-		console.log(resultScreen);
+		
 		// Sort
 		pdata.sort(function(a, b) {
 			if (resultScreen == 'DPS') return a.dps - b.dps;
@@ -1944,19 +1944,19 @@ function showResultScreen() {
 			
 			let rnum1;
 			let rnum2;
-			if (resultScreen == 'top dps') {
+			if (resultScreen == 'DPS') {
 				rnum1 = pdata[p].dpsbase;
 				rnum2 = pdata[p].damage;
 			}
-			if (resultScreen == 'top hps') {
+			if (resultScreen == 'HPS') {
 				rnum1 = pdata[p].hps;
 				rnum2 = pdata[p].healed;
 			}
-			if (resultScreen == 'top maxhit') {
+			if (resultScreen == 'Maximum Hit') {
 				rnum1 = pdata[p].maxhitnum;
 				rnum2 = pdata[p].maxhit;
 			}
-			if (resultScreen == 'top deaths') {
+			if (resultScreen == 'Deaths') {
 				rnum1 = pdata[p].deaths;
 				rnum2 = '';
 			}

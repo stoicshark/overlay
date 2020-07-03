@@ -15,6 +15,7 @@
 	<script src="lib/bootstrap-slider.min.js" type="text/javascript"></script>
 	<script src="lib/bootstrap-select.min.js" type="text/javascript"></script>
 	<script src="lib/spectrum.js" type="text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 	<script src="lib/config.js" type="text/javascript"></script>
 	<script src="lib/parse.js" type="text/javascript"></script>
 	<script src="lib/player.js" type="text/javascript"></script>
@@ -331,6 +332,20 @@
 				<h5 class="alert-heading">Results Screen</h5>
 				<input id="enableResultsScreen" type="checkbox" data-toggle="toggle" data-size="sm">
 				Enable Results Screen
+				<div style="text-align: center">
+					How many times to loop (0 for infinite): <span id="resultsScreenLoopValue"></span><br />
+					<input id="resultsScreenLoop" type="text" />
+				</div>
+				<hr>
+				<div style="text-align: center">
+					Select which result screens to display (Drag and drop)<br /><br />
+					<div id="shared-lists" class="row">
+						<div id="resultsScreenList1" class="list-group col">
+						</div>
+						<div id="resultsScreenList2" class="list-group col">
+						</div>
+					</div>
+				</div>
 			</div>
         </div>
 		<div id="savedata" style="display:none">
@@ -525,6 +540,48 @@
 		
 		if (oconfig.enableResultsScreen) $("#enableResultsScreen").prop('checked', true);
 		
+		$("#resultsScreenLoop").bootstrapSlider({ // resultsScreenLoop
+			value: oconfig.resultsScreenLoop,
+			step: 1,
+			min: 0,
+			max: 10
+		});
+		$("#resultsScreenLoopValue").text(oconfig.resultsScreenLoop);
+		$("#resultsScreenLoop").on("slide", function(e) {
+			$("#resultsScreenLoopValue").text(e.value);
+		});
+		
+		var resultsScreenList1 = document.getElementById('resultsScreenList1');
+		var resultsScreenList2 = document.getElementById('resultsScreenList2');
+		var resultsScreenOptions = [
+			'DPS',
+			'HPS',
+			'Maximum Hit',
+			'Deaths'
+		];
+		for (var rsi in resultsScreenOptions) {
+			var rsiSkip = false;
+			for (var orsi in oconfig.resultsScreenList) {
+				if (resultsScreenOptions[rsi] == oconfig.resultsScreenList[orsi]) {
+					resultsScreenList1.innerHTML += '<div class="list-group-item">' + resultsScreenOptions[rsi] + '</div>';
+					rsiSkip = true;
+					continue;
+				}
+			}
+			if (rsiSkip) continue;
+			resultsScreenList2.innerHTML += '<div class="list-group-item">' + resultsScreenOptions[rsi] + '</div>';
+		}
+		
+		new Sortable(resultsScreenList1, {
+			group: 'resultsScreenShared',
+			animation: 150
+		});
+
+		new Sortable(resultsScreenList2, {
+			group: 'resultsScreenShared',
+			animation: 150
+		});
+		
 		// ???
 		if (oconfig.eToasty) $("#eToasty").prop('checked', true);
 			
@@ -595,6 +652,7 @@
 			oconfig.deathBlood = $('#deathBlood').prop('checked');
 			
 			oconfig.enableResultsScreen = $('#enableResultsScreen').prop('checked');
+			oconfig.resultsScreenLoop = $('#resultsScreenLoop').bootstrapSlider('getValue');
 			
 			// ???
 			oconfig.eToasty = $('#eToasty').prop('checked');

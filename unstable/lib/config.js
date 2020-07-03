@@ -69,6 +69,7 @@ function Config() {
 	this.deathBlood = true;
 	this.critBlip = true;
 	this.enableResultsScreen = false; // Results Screen sub-effect settings
+	this.resultsScreenLoop = 3;
 	this.resultsScreenList = [
 			'DPS',
 			'HPS',
@@ -143,6 +144,7 @@ Config.prototype.update = function (d) {
 	if (typeof d.deathBlood !== 'undefined') this.deathBlood = d.deathBlood;
 	if (typeof d.critBlip !== 'undefined') this.critBlip = d.critBlip;
 	if (typeof d.enableResultsScreen !== 'undefined') this.enableResultsScreen = d.enableResultsScreen;
+	if (typeof d.resultsScreenLoop !== 'undefined') this.resultsScreenLoop = d.resultsScreenLoop;
 	if (typeof d.resultsScreenList !== 'undefined') this.resultsScreenList = d.resultsScreenList;
 	
 	if (typeof d.eToasty !== 'undefined') this.eToasty = d.eToasty;
