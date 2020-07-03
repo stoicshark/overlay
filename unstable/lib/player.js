@@ -40,7 +40,7 @@ function Player(data , dconfig) {
 	this.owner = "";
 	this.hps = 0;
 	this.healed = 0;
-	this.block = "0%";
+	this.blockpct = "0%";
 	this.parrypct = "0%";
 	this.damagepct = "0%"
 	this.damagetaken = 0;
@@ -91,7 +91,7 @@ Player.prototype.update = function (data) {
 			this.critdhit = d['CritDirectHitPct'];
 			this.dhits = d['DirectHitCount'];
 			this.critdhits = d['CritDirectHitCount'];
-			this.block = d['BlockPct'];
+			this.blockpct = d['BlockPct'];
 			this.parrypct = d['ParryPct'];
 			this.damagepct = d['damage%'];
 			this.damagetaken = d['damagetaken'];

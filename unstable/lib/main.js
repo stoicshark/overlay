@@ -1758,6 +1758,9 @@ function showResultScreen() {
 	let resultQueue = -1;
 	let resultScreen = '';
 	
+	// Counter for loops
+	let resultLoop = 0;
+	
 	// Events
 	let rbEvent = new Event('resultsBackgroundEvent'); // Background Anim/Creations
 	let rpEvent = new Event('resultsProcessEvent'); // Determine which results screen to process
@@ -1874,6 +1877,15 @@ function showResultScreen() {
 		resultQueue++;
 		if (resultQueue > config.resultsScreenList.length - 1) {
 			resultQueue = 0;
+			resultLoop++;
+			if (resultLoop > config.resultsScreenLoop - 1 && config.resultsScreenLoop != 0) {
+				try {
+					anime.remove('#result-cont');
+					$('#result-cont').remove(); // Remove this screen
+				} catch(e) {
+					//throw
+				}
+			}
 		}
 		resultScreen = config.resultsScreenList[resultQueue];
 		
@@ -1888,7 +1900,7 @@ function showResultScreen() {
 	}, false);
 	
 	// Show Top event function, muti-use
-	rEle.addEventListener('resultsTopEvent', function (e) { 	
+	rEle.addEventListener('resultsTopEvent', function (e) { 		
 		// local array to store and use player data
 		let pdata = [];
 		for (let pde in encounter.players) {
@@ -1896,15 +1908,28 @@ function showResultScreen() {
 			if (resultScreen == 'HPS' && encounter.players[pde].hps == 0) continue;
 			if (resultScreen == 'Maximum Hit' && encounter.players[pde].maxhitnum == 0) continue;
 			if (resultScreen == 'Deaths' && encounter.players[pde].deaths == 0) continue;
+			if (resultScreen == 'Critical%' && encounter.players[pde].crit == '0%') continue;
+			if (resultScreen == 'Direct Hit%' && encounter.players[pde].dhit == '0%') continue;
+			if (resultScreen == 'Crit Direct Hit%' && encounter.players[pde].critdhit == '0%') continue;
+			if (resultScreen == 'Blocked%' && encounter.players[pde].blockpct == '0%') continue;
+			if (resultScreen == 'Parried%' && encounter.players[pde].parrypct == '0%') continue;
+			if (resultScreen == 'Damage Taken' && encounter.players[pde].damagetaken == 0) continue;
 			if (encounter.players[pde].role == 'limit break') continue; // Skip limit breaks
 			pdata.push(encounter.players[pde]);
 		}
+				
 		// Sort
 		pdata.sort(function(a, b) {
 			if (resultScreen == 'DPS') return a.dps - b.dps;
 			if (resultScreen == 'HPS') return a.hps - b.hps;
 			if (resultScreen == 'Maximum Hit') return a.maxhitnum - b.maxhitnum;
 			if (resultScreen == 'Deaths') return a.deaths - b.deaths;
+			if (resultScreen == 'Critical%') return a.crit - b.crit;
+			if (resultScreen == 'Direct Hit%') return a.dhit - b.dhit;
+			if (resultScreen == 'Crit Direct Hit%') return a.critdhit - b.critdhit;
+			if (resultScreen == 'Blocked%') return a.blockpct - b.blockpct;
+			if (resultScreen == 'Parried%') return a.parrypct - b.parrypct;
+			if (resultScreen == 'Damage Taken') return a.damagetaken - b.damagetaken;
 		});
 		pdata.reverse();
 		
@@ -1914,6 +1939,12 @@ function showResultScreen() {
 		if (resultScreen == 'HPS') rtitle = 'top healing (hps)';
 		if (resultScreen == 'Maximum Hit') rtitle = 'top maximum hit';
 		if (resultScreen == 'Deaths') rtitle = 'top deaths';
+		if (resultScreen == 'Critical%') rtitle = 'top critical hits%';
+		if (resultScreen == 'Direct Hit%') rtitle = 'top direct hits%';
+		if (resultScreen == 'Crit Direct Hit%') rtitle = 'top crit direct hits%';
+		if (resultScreen == 'Blocked%') rtitle = 'top blocked%';
+		if (resultScreen == 'Parried%') rtitle = 'top parried%';
+		if (resultScreen == 'Damage Taken') rtitle = 'top damage taken';
 		
 		// Make yet another container
 		let rsbEle = document.createElement("div");
@@ -1942,7 +1973,7 @@ function showResultScreen() {
 			let pEle = document.createElement("div");
 			
 			let rnum1;
-			let rnum2;
+			let rnum2;			
 			if (resultScreen == 'DPS') {
 				rnum1 = pdata[p].dpsbase;
 				rnum2 = pdata[p].damage;
@@ -1957,6 +1988,30 @@ function showResultScreen() {
 			}
 			if (resultScreen == 'Deaths') {
 				rnum1 = pdata[p].deaths;
+				rnum2 = '';
+			}
+			if (resultScreen == 'Critical%') {
+				rnum1 = pdata[p].crit;
+				rnum2 = pdata[p].crithits;
+			}
+			if (resultScreen == 'Direct Hit%') {
+				rnum1 = pdata[p].dhit;
+				rnum2 = pdata[p].dhits;
+			}
+			if (resultScreen == 'Crit Direct Hit%') {
+				rnum1 = pdata[p].critdhit;
+				rnum2 = pdata[p].critdhits;
+			}
+			if (resultScreen == 'Blocked%') {
+				rnum1 = pdata[p].blockpct;
+				rnum2 = '';
+			}
+			if (resultScreen == 'Parried%') {
+				rnum1 = pdata[p].parrypct;
+				rnum2 = '';
+			}
+			if (resultScreen == 'Damage Taken') {
+				rnum1 = pdata[p].damagetaken;
 				rnum2 = '';
 			}
 			
@@ -2104,7 +2159,7 @@ function showResultScreen() {
 					update: function(a) {
 						pEle.getElementsByClassName('result-player-num')[0].innerHTML = a.animations[0].currentValue;
 						pEle.getElementsByClassName('result-player-num2')[0].innerHTML = a.animations[1].currentValue;
-						if (resultScreen == 'top maxhit' || resultScreen == 'top deaths') {
+						if (resultScreen == 'Maximum Hit' || resultScreen == 'Deaths' || resultScreen == 'Blocked%' || resultScreen == 'Parried%') {
 							pEle.getElementsByClassName('result-player-num2')[0].innerHTML = rnum2;
 						}
 					}
@@ -2153,18 +2208,23 @@ function showResultScreen() {
 		
 		// Final delay/trigger
 		var fDelay = 3000;
+		var fDuration = 1000;
 		if (pdata.length < 5) {
 			fDelay += 500 * pdata.length;
 		} else {
 			fDelay += 1150 * (pdata.length - 4);
 			fDelay += 5000;
 		}
+		if (pdata.length < 1) { // Skip screen if there's nothing to show!
+			fDelay = 0;
+			fDuration = 0;
+		}
 		anime({
 			targets: rsbEle,
 			opacity: 0,
 			easing: 'linear',
 			delay: fDelay,
-			duration: 1000,
+			duration: fDuration,
 			complete: function(e) {
 				rEle.dispatchEvent(rpEvent); // Process next event
 			}

@@ -15,7 +15,7 @@
 	<script src="lib/bootstrap-slider.min.js" type="text/javascript"></script>
 	<script src="lib/bootstrap-select.min.js" type="text/javascript"></script>
 	<script src="lib/spectrum.js" type="text/javascript"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+	<script src="lib/sortable.min.js"></script>
 	<script src="lib/config.js" type="text/javascript"></script>
 	<script src="lib/parse.js" type="text/javascript"></script>
 	<script src="lib/player.js" type="text/javascript"></script>
@@ -104,6 +104,15 @@
 			display: inline-table;
 			text-align: center;
 			width: 0;
+		}
+		
+		.list-group-item {
+			padding: 5px;
+		}
+		
+		.active-sortable {
+			color: #3D774A;
+			background-color: #D4EDDA;
 		}
     </style>
 </head>
@@ -339,7 +348,7 @@
 				<hr>
 				<div style="text-align: center">
 					Select which result screens to display (Drag and drop)<br /><br />
-					<div id="shared-lists" class="row">
+					<div id="shared-lists clearfix" class="row" style="margin-left: 0">
 						<div id="resultsScreenList1" class="list-group col">
 						</div>
 						<div id="resultsScreenList2" class="list-group col">
@@ -557,29 +566,45 @@
 			'DPS',
 			'HPS',
 			'Maximum Hit',
-			'Deaths'
+			'Deaths',
+			'Critical%',
+			'Direct Hit%',
+			'Crit Direct Hit%',
+			'Blocked%',
+			'Parried%',
+			'Damage Taken'
 		];
 		for (var rsi in resultsScreenOptions) {
 			var rsiSkip = false;
 			for (var orsi in oconfig.resultsScreenList) {
 				if (resultsScreenOptions[rsi] == oconfig.resultsScreenList[orsi]) {
-					resultsScreenList1.innerHTML += '<div class="list-group-item">' + resultsScreenOptions[rsi] + '</div>';
+					resultsScreenList1.innerHTML += '<div class="list-group-item active-sortable" data-id="' + resultsScreenOptions[rsi] + '">' + resultsScreenOptions[rsi] + '</div>';
 					rsiSkip = true;
 					continue;
 				}
 			}
 			if (rsiSkip) continue;
-			resultsScreenList2.innerHTML += '<div class="list-group-item">' + resultsScreenOptions[rsi] + '</div>';
+			resultsScreenList2.innerHTML += '<div class="list-group-item" data-id="' + resultsScreenOptions[rsi] + '">' + resultsScreenOptions[rsi] + '</div>';
 		}
 		
-		new Sortable(resultsScreenList1, {
+		var resultsScreenArray = Sortable.create(resultsScreenList1, {
 			group: 'resultsScreenShared',
-			animation: 150
+			animation: 150,
+			onAdd: function (evt) {
+				//evt.item.style.color = '#3D774A';
+				//evt.item.style.backgroundColor = '#D4EDDA';
+				$(evt.item).addClass('active-sortable');
+			}
 		});
 
-		new Sortable(resultsScreenList2, {
+		Sortable.create(resultsScreenList2, {
 			group: 'resultsScreenShared',
-			animation: 150
+			animation: 150,
+			onAdd: function (evt) {
+				//evt.item.style.color = '#00000';
+				//evt.item.style.backgroundColor = '#FFFFFF';
+				$(evt.item).removeClass('active-sortable');
+			}
 		});
 		
 		// ???
@@ -653,6 +678,7 @@
 			
 			oconfig.enableResultsScreen = $('#enableResultsScreen').prop('checked');
 			oconfig.resultsScreenLoop = $('#resultsScreenLoop').bootstrapSlider('getValue');
+			oconfig.resultsScreenList = resultsScreenArray.toArray();
 			
 			// ???
 			oconfig.eToasty = $('#eToasty').prop('checked');

@@ -72,15 +72,8 @@ function Config() {
 	this.resultsScreenLoop = 3;
 	this.resultsScreenList = [
 			'DPS',
-			'HPS',
 			'Maximum Hit',
-			'Deaths',
-			'Critical%',
-			'Direct Hit%',
-			'Crit Direct Hit%',
-			'Blocked%',
-			'Parried%',
-			'Damage Taken'
+			'Deaths'
 		];
 	
 	// Easter Eggs
