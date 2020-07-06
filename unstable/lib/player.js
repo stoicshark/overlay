@@ -240,9 +240,60 @@ Player.getJobName = function (job, role) {
 	return "";
 }
 
-
-
-
-
-
+Player.getStat = function(entry, player = null) {
+	var options = [
+			'DPS',
+			'HPS',
+			'Maximum Hit',
+			'Deaths',
+			'Critical%',
+			'Direct Hit%',
+			'Crit Direct Hit%',
+			'Blocked%',
+			'Parried%',
+			'Damage Taken'
+		];
+		
+	var doptions = [
+			['DPS', 'DPS'],
+			['HPS', 'HPS'],
+			['Maximum Hit', 'MAXHIT'],
+			['Deaths', 'DEATHS'],
+			['Critical%', 'CRIT'],
+			['Direct Hit%', 'DHIT'],
+			['Crit Direct Hit%', '! ! !'],
+			['Blocked%', 'BLOCK'],
+			['Parried%', 'PARRY'],
+			['Damage Taken', 'DMG']
+		];
+		
+	if (entry == 'options') return options;
+	if (entry == 'display') return doptions;
+	
+	switch (entry) {
+		case 'DPS':
+			return player.dpsbase
+		case 'HPS':
+			return player.hps;
+		case 'MAXHIT':
+			return player.maxhitnum;
+		case 'DEATHS':
+			return player.deaths;
+		case 'CRIT':
+			return player.crit;
+		case 'DHIT':
+			return player.dhit;
+		case '! ! !':
+			return player.critdhit;
+		case 'BLOCK':
+			return player.blockpct;
+		case 'PARRY':
+			return player.parrypct;
+		case 'DMG':
+			return player.damage;
+		default:
+			return '';
+	}
+	return stat;
+}
 

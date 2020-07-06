@@ -61,6 +61,13 @@ function Config() {
 	this.style = 'Skye';
 	this.layoutVertical = true;
 	this.layoutHorizontal = true;
+	this.styleMaxhit = true;
+	this.styleStatList = [
+			'Critical%',
+			'Direct Hit%',
+			'Crit Direct Hit%',
+			'Deaths'
+		];
 	
 	// Effects settings
 	this.showMaxhits = true;
@@ -69,7 +76,7 @@ function Config() {
 	this.deathBlood = true;
 	this.critBlip = true;
 	this.enableResultsScreen = false; // Results Screen sub-effect settings
-	this.resultsScreenLoop = 3;
+	this.resultsScreenLoop = 1;
 	this.resultsScreenList = [
 			'DPS',
 			'Maximum Hit',
@@ -136,6 +143,8 @@ Config.prototype.update = function (d) {
 	if (typeof d.style !== 'undefined') this.style = d.style;
 	if (typeof d.layoutVertical !== 'undefined') this.layoutVertical = d.layoutVertical;
 	if (typeof d.layoutHorizontal !== 'undefined') this.layoutHorizontal = d.layoutHorizontal;
+	if (typeof d.styleMaxhit !== 'undefined') this.styleMaxhit = d.styleMaxhit;
+	if (typeof d.styleStatList !== 'undefined') this.styleStatList = d.styleStatList;
 	
 	if (typeof d.showMaxhits !== 'undefined') this.showMaxhits = d.showMaxhits;
 	if (typeof d.deathColor !== 'undefined') this.deathColor = d.deathColor;

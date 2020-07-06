@@ -305,6 +305,14 @@ body, html {
 	text-shadow: none;
 }
 
+.player-class-icon-24 {
+	right: 0;
+	top: 0;
+	width: 30px;
+	height: 30px;
+	font-size: 30px;
+}
+
 .player-side-popup {
 	position: absolute;
 	text-align: center;
