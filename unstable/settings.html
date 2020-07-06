@@ -436,9 +436,8 @@
 		// Checking to see if this is in OBS/Websocket
 		var url = window.location.href;
 		var obs = url.includes('HOST_PORT');
-		//if (obs) { // Websocket, possibly OBS
-		if (true) {
-			$('#obs').append('<br />OBS/Websocket detected! Certain actions are simplfied.');
+		if (obs) { // Websocket, possibly OBS
+			$('#obs').append('<br />OBS/Websocket detected! Certain  settings actions are simplfied.');
 		}
 		
 
@@ -620,33 +619,61 @@
 			styleStatList2.innerHTML += '<div class="list-group-item" data-id="' + styleStatUnused[u] + '">' + styleStatUnused[u] + '</div>';
 		}
 		
-		var styleStatArray = Sortable.create(styleStatList1, {
-			group: {
-				name: 'styleList',
-				put: function (to) {
-					return to.el.children.length < 4;
+		if (obs) {
+			var styleStatArray = Sortable.create(styleStatList1, {
+				group: {
+					name: 'styleList',
+					put: function (to) {
+						return to.el.children.length < 4;
+					}
+				},
+				forceFallback: true,
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).addClass('active-sortable');
 				}
-			},
-			animation: 150,
-			onAdd: function (evt) {
-				$(evt.item).addClass('active-sortable');
-			}
-		});
-
-		Sortable.create(styleStatList2, {
-			group: {
-				name: 'styleOptions',
-				put: 'styleList',
-				pull: function (to, from) {
-					return from.el.children.length > 2 || 'clone';
+			});
+			Sortable.create(styleStatList2, {
+				group: {
+					name: 'styleOptions',
+					put: 'styleList',
+					pull: function (to, from) {
+						return from.el.children.length > 2 || 'clone';
+					}
+				},
+				forceFallback: true,
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).removeClass('active-sortable');
 				}
-			},
-			animation: 150,
-			onAdd: function (evt) {
-				$(evt.item).removeClass('active-sortable');
-			}
-		});
-		
+			});
+		} else {
+			var styleStatArray = Sortable.create(styleStatList1, {
+				group: {
+					name: 'styleList',
+					put: function (to) {
+						return to.el.children.length < 4;
+					}
+				},
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).addClass('active-sortable');
+				}
+			});
+			Sortable.create(styleStatList2, {
+				group: {
+					name: 'styleOptions',
+					put: 'styleList',
+					pull: function (to, from) {
+						return from.el.children.length > 2 || 'clone';
+					}
+				},
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).removeClass('active-sortable');
+				}
+			});
+		}
 		// Effects
 		if (oconfig.showMaxhits) $("#showMaxhits").prop('checked', true);
 		if (oconfig.critBlip) $("#critBlip").prop('checked', true);
@@ -686,24 +713,39 @@
 		for (var u in resultScreenUnused) {
 			resultsScreenList2.innerHTML += '<div class="list-group-item" data-id="' + resultScreenUnused[u] + '">' + resultScreenUnused[u] + '</div>';
 		}
-		
-		var resultsScreenArray = Sortable.create(resultsScreenList1, {
-			group: 'resultsScreenShared',
-			forceFallback: true,
-			animation: 150,
-			onAdd: function (evt) {
-				$(evt.item).addClass('active-sortable');
-			}
-		});
-
-		Sortable.create(resultsScreenList2, {
-			group: 'resultsScreenShared',
-			forceFallback: true,
-			animation: 150,
-			onAdd: function (evt) {
-				$(evt.item).removeClass('active-sortable');
-			}
-		});
+		if (obs) {
+			var resultsScreenArray = Sortable.create(resultsScreenList1, {
+				group: 'resultsScreenShared',
+				forceFallback: true,
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).addClass('active-sortable');
+				}
+			});
+			Sortable.create(resultsScreenList2, {
+				group: 'resultsScreenShared',
+				forceFallback: true,
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).removeClass('active-sortable');
+				}
+			});
+		} else {
+			var resultsScreenArray = Sortable.create(resultsScreenList1, {
+				group: 'resultsScreenShared',
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).addClass('active-sortable');
+				}
+			});
+			Sortable.create(resultsScreenList2, {
+				group: 'resultsScreenShared',
+				animation: 150,
+				onAdd: function (evt) {
+					$(evt.item).removeClass('active-sortable');
+				}
+			});
+		}
 		
 		// ???
 		if (oconfig.eToasty) $("#eToasty").prop('checked', true);
@@ -813,7 +855,6 @@
 		function saveDebug() {
 			if (document.getElementById('saveDebug').checked) {
 				hideAll();
-				//var newConfig = document.getElementById('saveDebugValue').value;
 				localStorage.setItem('config', document.getElementById('saveDebugValue').value);
 				localStorage.setItem('config-saved', true);
 				document.getElementById("reset-display").style.display = 'block';
