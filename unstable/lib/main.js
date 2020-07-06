@@ -745,7 +745,7 @@ function createDiv(player) {
 	}
 	
 	/*Debug*/
-	$('#'+player.divID).click(function(){ 
+	/*$('#'+player.divID).click(function(){ 
 		//player.displaymaxhit = true;
 		//player.displaycrit = true;
 		//player.state = 'dead';
@@ -754,7 +754,7 @@ function createDiv(player) {
 		createDebugPlayer(false);
 		//eToasty = 5;
 		//funcToasty();
-	});
+	});*/
 }
 
 function animateDiv(player, d) {
