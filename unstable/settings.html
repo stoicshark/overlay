@@ -130,7 +130,7 @@
     </ul>
     <div id="top"></div>
     <div id="content">
-		<div class="alert dismissable alert-danger fade show" role="alert" id="debug">
+		<div class="alert dismissable alert-danger fade show" role="alert" id="obs">
 			The settings page is currently in development and is liable to change often.
 			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
@@ -434,8 +434,13 @@
 		var oconfig = JSON.parse(localStorage.getItem('config'));
 		
 		// Checking to see if this is in OBS/Websocket
-		var debug = window.location.href;
-		$("#debug").append(debug);
+		var url = window.location.href;
+		var obs = url.includes('HOST_PORT');
+		//if (obs) { // Websocket, possibly OBS
+		if (true) {
+			$('#obs').append('<br />OBS/Websocket detected! Certain actions are simplfied.');
+		}
+		
 
 		// Possible displayable players statistic options
 		var playerStatOptions = Player.getStat('options');
@@ -684,6 +689,7 @@
 		
 		var resultsScreenArray = Sortable.create(resultsScreenList1, {
 			group: 'resultsScreenShared',
+			forceFallback: true,
 			animation: 150,
 			onAdd: function (evt) {
 				$(evt.item).addClass('active-sortable');
@@ -692,6 +698,7 @@
 
 		Sortable.create(resultsScreenList2, {
 			group: 'resultsScreenShared',
+			forceFallback: true,
 			animation: 150,
 			onAdd: function (evt) {
 				$(evt.item).removeClass('active-sortable');
